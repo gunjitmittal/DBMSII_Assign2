@@ -17,14 +17,11 @@ from db_class import *
 files = dotenv.load_dotenv(".env")
 my_email = os.getenv("MY_EMAIL")
 password = os.getenv("PASSWORD")
-print(my_email,password)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ckeditor = CKEditor(app)
 Bootstrap(app)
-
-names = ['Ankit','Gunjit','Pranav','Rudransh','Aayush','Aakash','Abhishek']
 
 # #CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL",  "sqlite:///blog.db")
@@ -40,6 +37,14 @@ def admin_only(f):
         return abort(403)
     return innerfunction
 
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    force_lower=False,
+                    use_ssl=False,
+                    base_url=None)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -54,7 +59,7 @@ def get_all_posts():
         return render_template("index.html", all_posts=posts, form=form)
     else:
         posts = BlogPost.query.filter(BlogPost.author.has(name=form.data['autocomp'])).all()
-        if posts == []:
+        if form.data['autocomp'] == "":
             posts = BlogPost.query.all()
         return render_template("index.html", all_posts=posts, form=form)
 
