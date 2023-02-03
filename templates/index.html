@@ -1,3 +1,4 @@
+{% import "bootstrap/wtf.html" as wtf %}
 {% include "header.html" %}
 
   <!-- Page Header -->
@@ -19,6 +20,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
+        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
         {% for post in all_posts %}
         <div class="post-preview">
           <a href="{{ url_for('show_post', post_id=post.id) }}">
@@ -42,11 +44,28 @@
 
 
         <!-- New Post -->
-        {% if current_user.id==1 %}
+        {% if current_user.is_authenticated %}
           <div class="clearfix">
             <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
           </div>
         {% endif %}
+      <script>
+        $(function() {
+          $("#autocomplete").autocomplete({
+              source:function(request, response) {
+                  $.getJSON("{{url_for('autocomplete')}}",{
+                      q: request.term,
+                  }, function(data) {
+                      response(data.matching_results); 
+                  });
+              },
+              minLength: 1,
+              select: function(event, ui) {
+                  console.log(ui.item.value); 
+              }
+          });
+      })
+      </script>
       </div>
     </div>
   </div>
