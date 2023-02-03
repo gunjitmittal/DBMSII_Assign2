@@ -1,26 +1,29 @@
-from flask import Flask, render_template, redirect, url_for, flash, abort, request
+from flask import Flask, render_template, redirect, url_for, flash, abort, request, Response, jsonify
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship,Query
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegistrationForm, LoginForm, CommentForm
+from forms import CreatePostForm, RegistrationForm, LoginForm, CommentForm, SearchForm
 from flask_gravatar import Gravatar
 import dotenv
 import smtplib
 import os
+import json
 
 files = dotenv.load_dotenv(".env")
 my_email = os.getenv("MY_EMAIL")
 password = os.getenv("PASSWORD")
-
+print(my_email,password)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ckeditor = CKEditor(app)
 Bootstrap(app)
+
+names = ['Ankit','Gunjit','Pranav','Rudransh','Aayush','Aakash','Abhishek']
 
 # #CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL",  "sqlite:///blog.db")
@@ -79,8 +82,7 @@ db.create_all()
 def admin_only(f):
     def innerfunction(*args, **kwargs):
         if current_user.is_authenticated:
-            if current_user.id == 1:
-                return f(*args, **kwargs)
+            return f(*args, **kwargs)
         return abort(403)
     return innerfunction
 
@@ -90,10 +92,17 @@ def load_user(user_id):
     return User.query.filter_by(id=user_id).first()
 
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def get_all_posts():
-    posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts)
+    form = SearchForm()
+    if request.method == "GET":
+        posts = BlogPost.query.all()
+        return render_template("index.html", all_posts=posts, form=form)
+    else:
+        posts = BlogPost.query.filter(BlogPost.author.has(name=form.data['autocomp'])).all()
+        if posts == []:
+            posts = BlogPost.query.all()
+        return render_template("index.html", all_posts=posts, form=form)
 
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -105,7 +114,8 @@ def register():
             new_user = User(
                 name=form.data['name'],
                 email=form.data['email'],
-                password=generate_password_hash(password=form.data['password'], method="pbkdf2:sha256", salt_length=16)
+                # password=generate_password_hash(password=form.data['password'], method="pbkdf2:sha256", salt_length=16)
+                password=form.data['password']
             )
             db.session.add(new_user)
             db.session.commit()
@@ -232,6 +242,14 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for('get_all_posts'))
 
+@app.route('/search')
+def autocomplete():
+    search = request.args.get('q')
+    query = db.session.query(User.name).filter(User.name.like('%' + str(search) + '%')).distinct().all()
+    results = [mv.name for mv in query]
+    print(results)
+    # print(results)
+    return jsonify(matching_results=results)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)

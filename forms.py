@@ -1,5 +1,5 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
+from flask_wtf import FlaskForm,Form
+from wtforms import StringField, SubmitField,TextField, PasswordField
 from wtforms.validators import DataRequired, URL, Email
 from flask_ckeditor import CKEditorField
 
@@ -29,3 +29,6 @@ class LoginForm(FlaskForm):
 class CommentForm(FlaskForm):
     body = CKEditorField("Comment", validators=[DataRequired()])
     submit = SubmitField("SUBMIT COMMENT")
+    
+class SearchForm(FlaskForm):
+    autocomp = TextField("",id='autocomplete',render_kw={"placeholder": "Search"})
