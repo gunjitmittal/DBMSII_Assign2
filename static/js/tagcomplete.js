@@ -74,13 +74,20 @@
 
 			//triggers when a new tag is added
 			onAdd: function(data){
+				$('.tag_input').attr('placeholder','');
 				return true;
 			},//end on Add
 
 			//ondelete
 			//triggers when a tag is deleted
-			onDelete: function(data){
-				return true;
+			onDelete: function(instance){
+			 var lastTagNo = instance.instance.tagsContainer.find('.tag').length;
+
+			 //if empty abort
+			 if(lastTagNo == 0){
+				$('.tag_input').attr('placeholder','Search by tags');
+			 }
+			return true
 			}//end on delete
 
 		};//end default objects
@@ -88,7 +95,7 @@
 
 		//set default options
 		var options = $.extend(true,defaultOpts,userOpts);
-		console.log(options);
+		// console.log(options);
 		//
 
 		//keycode
@@ -145,7 +152,6 @@
 			if(userOptions){
 				options = $.extend(true,options,userOptions);
 			}//end if
-			console.log(options);
 			//then recreate plugin
 			return $.fn.tagComplete.call(this,options);
 
@@ -181,7 +187,7 @@
 			tagCompleteMain = $("<div id='"+instanceId+"' class='tag_complete_main'>"+
 									"<div class='tag_complete'>"+
 									"<div class='tags_container'></div>"+
-									"<input type='text' class='tag_input' />"+
+									"<input type='text' class='tag_input' placeholder='Search by tags' />"+
 									"</div>"+
 									"<ul class='autocomplete hide'></ul>"+
 									"</div>"
@@ -222,7 +228,7 @@
 				options: options,
 				ajaxPool: ajaxPool
 			};//end dom obj
-			console.log(options)
+			// console.log(options)
 			//instance
 			this.instance = self.instance = instanceData;
 
@@ -286,7 +292,6 @@
 			tagsContainer.on("click",".tag .close",instanceData,function(e){
 				//instance data
 				inst = e.data;
-				console.log(inst.options)
 				tag = $(this).parent(".tag");
 
 				//delete tag
@@ -324,7 +329,7 @@
 				//if value is empty and the backspace is pressed
 				//lets delete last input and also populate
 				//the input with it
-
+				// console.log(tagsContainer)
 				if (options.freeEdit && (value.length == 0 && keycode == backspaceKey)) {
 
 					//get lastTag
@@ -487,7 +492,7 @@
 	 * addTag
 	 */
 	$.fn.addTag = function(tagId,tagText,instance){
-		console.log(instance.options)
+		// console.log(instance.options)
 		closeTag = "<span class='close'></span>";
 
 		tag = $("<span data-id='"+tagId+"' class='tag'>"+
@@ -600,9 +605,9 @@
 	 	tags = tagsContainer.find(".tag");
 
 	 	//if no tag, return false
-	 	if(tags.length == 0){
-	 		return false;
-	 	}//end
+	 	// if(tags.length == 0){
+	 	// 	return false;
+	 	// }//end
 
 	 	//loop to get keys
 	 	$.each(tags,function(key,tagObj){
@@ -624,18 +629,14 @@
 	  * deleteTag
 	  */
 	 $.fn.deleteTag = function(tag,instance){
-		console.log(instance.options)
 	 	//lets get the tag info
 	 	var tagId = $(tag).data("id");
 	 	var tagText = $(tag).text();
-
 	 	//delete tag
 	 	tag.remove();
-
 	 	//call on Delete
 	 	instance.options.onDelete.call(null,{
-	 										id:tagId,
-	 										text:tagText
+	 										instance
 	 									});
 
 	 	//refresh User Input
