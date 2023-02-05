@@ -5,8 +5,8 @@ from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship,Query
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegistrationForm, LoginForm, CommentForm, SearchForm
+from flask_login import login_user, LoginManager, login_required, current_user, logout_user
+from forms import *
 from flask_gravatar import Gravatar
 import dotenv
 import smtplib
@@ -60,6 +60,16 @@ def get_all_posts():
     else:
         posts = BlogPost.query.filter(BlogPost.author.has(name=form.data['autocomp'])).all()
         if form.data['autocomp'] == "":
+            tags = form.data['tag_autocomp'].split(',')
+            q=[]
+            for i in range(len(tags)):
+                tags[i] = tags[i].strip()
+                q.append(db.session.query(BlogPost).filter(BlogPost.tag.like('%' + str(tags[i]) + '%')))
+            query=q[0]
+            for i in range(len(tags)-1):
+                query = q[i].intersect(q[i+1])
+            posts = query
+        if form.data['autocomp'] == "" and form.data['tag_autocomp'] == []:
             posts = BlogPost.query.all()
         return render_template("index.html", all_posts=posts, form=form)
 
@@ -144,7 +154,7 @@ def contact():
         connection = smtplib.SMTP("smtp.gmail.com", 587)
         connection.starttls()
         connection.login(user=my_email, password=password)
-        connection.sendmail(from_addr=my_email, to_addrs="gunjitmittal2@gmail.com",
+        connection.sendmail(from_addr=my_email, to_addrs="ai21btech11004@iith.ac.in",
                             msg=f"Subject: Blog-contact-form\n\n Name: {request.form['name']} \n Email:"
                                 f" {request.form['email']} \n Phone: {request.form['phone']} \n Message: {request.form['message']} ")
         connection.close()
@@ -203,11 +213,19 @@ def delete_post(post_id):
 
 @app.route('/search')
 def autocomplete():
-    search = request.args.get('q')
-    query = db.session.query(User.name).filter(User.name.like('%' + str(search) + '%')).distinct().all()
-    results = [mv.name for mv in query]
-    print(results)
-    # print(results)
+    curr_search = request.args.get('q')
+    query_names = db.session.query(User.name).filter(User.name.like('%' + str(curr_search) + '%')).distinct().all()
+    results_name = [mv.name for mv in query_names]
+    results = results_name
+    return jsonify(matching_results=results)
+
+@app.route('/tagsearch')
+def tagcomplete():
+    curr_search = request.args.get('q')
+    print(curr_search)
+    query_tags = db.session.query(Tags.tag).filter(Tags.tag.like('%' + str(curr_search) + '%')).distinct().all()
+    results_tag = [mv.tag for mv in query_tags]
+    results = results_tag
     return jsonify(matching_results=results)
 
 if __name__ == "__main__":

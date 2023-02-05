@@ -31,4 +31,6 @@ class CommentForm(FlaskForm):
     submit = SubmitField("SUBMIT COMMENT")
     
 class SearchForm(FlaskForm):
-    autocomp = TextField("",id='autocomplete',render_kw={"placeholder": "Search"})
+    autocomp = TextField("",id='autocomplete',render_kw={"placeholder": "Search by name"})
+    tag_autocomp = TextField("",id= 'tag_autocomplete',render_kw={"placeholder": "Search by tag"})
+    submit = SubmitField("search")
