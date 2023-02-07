@@ -63,7 +63,6 @@ def get_all_posts():
             tags = form.data['tag_autocomp'].split(',')
             q=[]
             for i in range(len(tags)):
-                tags[i] = tags[i].strip()
                 q.append(db.session.query(BlogPost).filter(BlogPost.tag.like('%' + str(tags[i]) + '%')))
             query=q[0]
             for i in range(len(tags)-1):
