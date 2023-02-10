@@ -24,7 +24,16 @@
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   <link href="{{ url_for('static', filename='css/tagcomplete.css')}}" rel="stylesheet">
-  
+  <style>
+    .ui-autocomplete {
+         max-height: 200px;
+         overflow-y: auto;
+         /* prevent horizontal scrollbar */
+         overflow-x: hidden;
+         /* add padding to account for vertical scrollbar */
+         padding-right: 20px;
+     } 
+</style>
 </head>
 
 <body>

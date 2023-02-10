@@ -40,14 +40,14 @@
             <h2 class="post-title">
               {{post.title}}
             </h2>
-            <h3 class="post-subtitle">
+          <!--  <h3 class="post-subtitle">
               {{post.subtitle}}
-            </h3>
+            </h3> -->
           </a>
           <p class="post-meta">Posted by
-            <a href="#">{{post.author.name}}</a>
-            on {{post.date}} tag:{{post.tag}}
-            {% if current_user.id==1 %}
+            <a href="#">{{post.owner_display_name}}</a>
+            on {{post.creation_date.date()}} tag:{{post.tags.replace('<','').replace('>',',')[:-1]}}
+            {% if current_user.id==post.owner_user_id %}
               <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
             {% endif %}
           </p>
@@ -65,11 +65,12 @@
       <script>
         $(function() {
           $("#autocomplete").autocomplete({
+              minLength: 2,
               source:function(request, response) {
                   $.getJSON("{{url_for('autocomplete')}}",{
                       q: request.term,
                   }, function(data) {
-                      response(data.matching_results); 
+                      response(data.matching_results.slice(0,50)); 
                   });
               },
               minLength: 1,
