@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm,Form
-from wtforms import StringField, SubmitField,TextField, PasswordField
+from wtforms import StringField, SubmitField,TextField, PasswordField, SelectField
 from wtforms.validators import DataRequired, URL, Email
 from flask_ckeditor import CKEditorField
 
@@ -30,4 +30,5 @@ class CommentForm(FlaskForm):
 class SearchForm(FlaskForm):
     autocomp = TextField("",id='autocomplete',render_kw={"placeholder": "Search by name"})
     tag_autocomp = TextField("",id= 'tag_autocomplete',render_kw={"placeholder": "Search by tag"})
+    sortby = SelectField('Sort by', choices=[('none',"Sort By"), ('Time','Time'), ('Upvotes','Upvotes')])
     submit = SubmitField("search")
