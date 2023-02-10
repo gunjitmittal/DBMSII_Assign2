@@ -368,7 +368,6 @@
 				else if((keycode == enterKey || e.key == options.tokenizer)
 						&& value.length > 0
 						&& options.freeInput == true){
-
 					//trim last tokenizer
 					if(value.endsWith(options.tokenizer)){
 						value = value.slice(0,value.lastIndexOf(options.tokenizer));
@@ -498,7 +497,7 @@
 		tag = $("<span data-id='"+tagId+"' class='tag'>"+
 				tagText+closeTag+
 				"</span>");
-
+		console.log(tagText)
 		//trigger onAdd (returns true if success, can also be cancelled)
 		if (instance.options.onAdd.call(null, {
 		    tagId: tagId,
@@ -613,7 +612,7 @@
 	 	$.each(tags,function(key,tagObj){
 
 	 		//lets get the data id
-	 		tagData = $(this).data("id") || $(this).text();
+	 		tagData = $(this).text();
 
 	 		tokenizedData += tagData+",";
 	 	});//end loop
