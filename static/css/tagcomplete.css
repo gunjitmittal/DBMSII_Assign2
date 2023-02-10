@@ -4,7 +4,8 @@
 	cursor: text;
 	display: block;
 	background:#fcfdff;
-	padding:5px;
+	padding:0px;
+	transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
 .tag_complete .tags_container{
@@ -14,11 +15,13 @@
 
 .tag_complete .tag_input{
 	all:unset;
-	min-height:45px !important;
+	/* min-height:45px !important; */
+	/* height:calc(1.5em + 0.75rem + 2px); */
 	background:none;
-	display:inline;
+	background-color:#fff;
+	display:inline-block;
 	margin:unset;
-	padding: unset;
+	padding: .375rem .75rem;
 	border:0 !important;
 	width:unset;
 	box-shadow: none !important;

@@ -62,10 +62,12 @@ def load_user(id):
 def get_all_posts():
     form = SearchForm()
     if request.method == "GET":
-        posts = Posts.query.filter_by(post_type_id=1).all()[:10]
+        posts = Posts.query.filter_by(post_type_id=1).order_by(Posts.score.desc()).all()[:10]
         return render_template("index.html", all_posts=posts, form=form)
     else:
-        posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=form.data['autocomp']).all()
+        posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=form.data['autocomp'])
+        sortby = form.data['sortby']
+        print(sortby)
         if form.data['autocomp'] == "":
             tags = form.data['tag_autocomp'].split(',')
             q=[]
@@ -75,8 +77,13 @@ def get_all_posts():
             for i in range(len(tags)-1):
                 query = query.intersect(q[i+1])
             posts = query
-        if form.data['autocomp'] == "" and form.data['tag_autocomp'] == []:
-            posts = Posts.query.filter_by(post_type_id=1).all()[:10]
+        if form.data['autocomp'] == "" and form.data['tag_autocomp'] == "":
+            posts = Posts.query.filter_by(post_type_id=1)
+        if sortby=='Time':
+            posts = posts.order_by(Posts.creation_date.desc())
+        elif sortby=='Upvotes':
+            posts = posts.order_by(Posts.score.desc())
+        posts = posts[:10]
         return render_template("index.html", all_posts=posts, form=form)
 
 
