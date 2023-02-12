@@ -3,8 +3,7 @@ from wtforms import StringField, SubmitField,TextField, PasswordField, SelectFie
 from wtforms.validators import DataRequired, URL, Email
 from flask_ckeditor import CKEditorField
 
-
-# #WTForm
+# WTForm
 class CreatePostForm(FlaskForm):
     title = StringField("Blog Post Title", validators=[DataRequired()])
     tags = StringField("Tags (separated with ,)", validators=[DataRequired()])
@@ -15,7 +14,6 @@ class CreatePostForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     name = StringField("Display Name", validators=[DataRequired()])
     submit = SubmitField("SIGN ME UP!")
-
 
 class LoginForm(FlaskForm):
     id = StringField("ID", validators=[DataRequired()])

@@ -1,58 +1,25 @@
-from flask import Flask
 import os
+from dotenv import load_dotenv
+from sqlalchemy.orm import relationship
+
+from flask import Flask
 from flask_ckeditor import CKEditor
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 
+load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
-# #CONNECT TO DB
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL",  "sqlite:///blog.db")
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:notsoeasy@localhost:5432/stackdb"
+# Connect to the database
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@localhost:5432/stackdb"
 db = SQLAlchemy(app)
 
-
-# #CONFIGURE TABLES
-# class BlogPost(db.Model):
-#     __tablename__ = "blog_posts"
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String(250), unique=True, nullable=False)
-#     subtitle = db.Column(db.String(250), nullable=False)
-#     date = db.Column(db.String(250), nullable=False)
-#     body = db.Column(db.Text, nullable=False)
-#     img_url = db.Column(db.String(250), nullable=False)
-#     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-#     author = relationship("User", back_populates="posts")
-#     post_comments = relationship("Comment", back_populates="parent_post")
-
-
-# class User(UserMixin, db.Model):
-#     __tablename__ = 'users'
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(250), nullable=False)
-#     email = db.Column(db.String(250), nullable=False)
-#     password = db.Column(db.String(250), nullable=False)
-#     posts = relationship("BlogPost", back_populates="author")
-#     comments = relationship("Comment", back_populates="comment_author")
-
-
-# class Comment(db.Model):
-#     __tablename__ = "comments"
-#     id = db.Column(db.Integer, primary_key=True)
-#     text = db.Column(db.String(250), nullable=False)
-#     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-#     comment_author = relationship("User", back_populates="comments")
-#     post_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
-#     parent_post = relationship("BlogPost", back_populates="post_comments")
-##
-##
-##
+# Database schema
 class Users(db.Model,UserMixin):
     __tablename__='users'
     id=db.Column(db.Integer,primary_key=True)
