@@ -16,7 +16,7 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # Connect to the database
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@localhost:5432/stackdb"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@localhost:5432/cqadb"
 db = SQLAlchemy(app)
 
 # Database schema
