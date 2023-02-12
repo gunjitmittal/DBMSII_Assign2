@@ -1,19 +1,19 @@
+import os
+import dotenv
+import json
+from datetime import date, datetime
+import smtplib
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import relationship, Query
+
 from flask import Flask, render_template, redirect, url_for, flash, abort, request, Response, jsonify
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
-from datetime import date
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship,Query
 from flask_login import login_user, LoginManager, login_required, current_user, logout_user
-from forms import *
 from flask_gravatar import Gravatar
-import dotenv
-import smtplib
-import os
-import json
-from datetime import datetime
-# from db_class import *
+
+from forms import *
 from db import *
 
 files = dotenv.load_dotenv(".env")
@@ -25,12 +25,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
-# #CONNECT TO DB
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL",  "sqlite:///blog.db")
-# DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user='postgres',pw='notsoeasy',url="127.0.0.1:5432"
-# ,db="stackdb")
-# print(DB_URL)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:notsoeasy@localhost:5432/stackdb"
+# Connect to the database
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@localhost:5432/stackdb"
 db = SQLAlchemy(app)
 # migrate = Migrate(app, db)
 
