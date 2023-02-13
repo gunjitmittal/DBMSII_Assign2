@@ -21,7 +21,7 @@
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
        <!--{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}-->
-       <form class='form-inline' method='POST'>
+       <form class='form-inline' method='GET'>
         <div class='form-group'>
           {{ form.autocomp.label }} {{ form.autocomp(class="form-control") }}
           </div>
@@ -35,7 +35,7 @@
             {{ form.submit(class="btn btn-default") }}
         </div>
     </form>
-        {% for post in all_posts %}
+        {% for post in all_posts.items %}
         <div class="post-preview">
           <a href="{{ url_for('show_post', post_id=post.id) }}">
             <h2 class="post-title">
@@ -56,7 +56,8 @@
         <hr>
         {% endfor %}
 
-
+        {% if all_posts.has_prev %}<a href="{{ url_for('get_all_posts', page=all_posts.prev_num, autocomp=args['autocomp'], tag_autocomp=args['tag_autocomp'], sortby=args['sortby']) }}">&lt;&lt; Previous page</a>{% endif %} | 
+        {% if all_posts.has_next %}<a href="{{ url_for('get_all_posts', page=all_posts.next_num, autocomp=args['autocomp'], tag_autocomp=args['tag_autocomp'], sortby=args['sortby']) }}">Next Page &gt;&gt;</a>{% endif %}
         <!-- New Post -->
         {% if current_user.is_authenticated %}
           <div class="clearfix">
