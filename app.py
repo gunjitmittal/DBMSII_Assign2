@@ -54,33 +54,32 @@ def load_user(id):
     return Users.query.filter_by(id=id).first()
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['GET'])
 def get_all_posts():
+    page = request.args.get('page', 1, type=int)
     form = SearchForm()
-    if request.method == "GET":
-        posts = Posts.query.filter_by(post_type_id=1).order_by(Posts.score.desc()).all()[:10]
-        return render_template("index.html", all_posts=posts, form=form)
-    else:
-        posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=form.data['autocomp'])
-        sortby = form.data['sortby']
-        print(sortby)
-        if form.data['autocomp'] == "":
-            tags = form.data['tag_autocomp'].split(',')
-            q=[]
-            for i in range(len(tags)):
-                q.append(db.session.query(Posts).filter(Posts.tags.like('%<' + str(tags[i]) + '>%')))
-            query=q[0]
-            for i in range(len(tags)-1):
-                query = query.intersect(q[i+1])
-            posts = query
-        if form.data['autocomp'] == "" and form.data['tag_autocomp'] == "":
-            posts = Posts.query.filter_by(post_type_id=1)
-        if sortby=='Time':
-            posts = posts.order_by(Posts.creation_date.desc())
-        elif sortby=='Upvotes':
-            posts = posts.order_by(Posts.score.desc())
-        posts = posts[:10]
-        return render_template("index.html", all_posts=posts, form=form)
+    name = request.args.get('autocomp',"",type=str)
+    tags = request.args.get('tag_autocomp',"")
+    sortby = request.args.get('sortby','none',type=str)
+    args=dict(request.args)
+    posts = Posts.query.filter_by(post_type_id=1)
+    if name != "":
+        posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=name)
+    if name == "" and tags!= "":
+        tags = tags.split(',')
+        q=[]
+        for i in range(len(tags)):
+            q.append(db.session.query(Posts).filter(Posts.tags.like('%<' + str(tags[i]) + '>%')))
+        query=q[0]
+        for i in range(len(tags)-1):
+            query = query.intersect(q[i+1])
+        posts = query
+    if sortby=='Time':
+        posts = posts.order_by(Posts.creation_date.desc())
+    elif sortby=='Upvotes' or sortby=='none':
+        posts = posts.order_by(Posts.score.desc())
+    posts = posts.paginate(page)
+    return render_template("index.html", all_posts=posts, form=form, args=args)
 
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -146,9 +145,14 @@ def show_post(post_id):
         else:
             flash("You need to login or register first.")
             return redirect(url_for('login'))
-    comments = Comments.query.filter_by(post_id=post_id).all()
-    return render_template("post.html", post=requested_post, form=form, comments=comments)
-
+    comments = Comments.query.filter_by(post_id=post_id).all()[:5]
+    answer_posts = Posts.query.filter_by(parent_id=post_id).filter_by(post_type_id=2).all()
+    answer_comments = {answer.id:Comments.query.filter_by(post_id=answer.id).all()[:5] for answer in answer_posts}
+    for answer in answer_comments:
+        print(len(answer_comments[answer]))
+    # print(len(answer_posts))
+    return render_template("post.html", post=requested_post, form=form, comments=comments, answer_posts=answer_posts, answer_comments=answer_comments)
+ 
 
 @app.route("/about")
 def about():

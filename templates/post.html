@@ -55,6 +55,32 @@
       </div>
     </div>
   </article>
-
+  {% for answer in answer_posts %}
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          
+            {{ answer.body|safe }}
+            <hr><hr><hr>
+            <div class="col-lg-8 col-md-10 mx-auto comment">
+              {% for comment in answer_comments[answer.id] %}
+                <ul class="commentList">
+                  <li>
+                      <div class="commenterImage">
+                       <img src="{{ comment.user_id |string| gravatar(size=200, rating='x') }}" >
+                      </div>
+                      <div class="commentText">
+                        <p>{{ comment.text | safe }}</p>
+                        <span class="date sub-text">{{ comment.user_display_name }}</span>
+                      </div>
+                  </li>
+                </ul>
+              {% endfor %}
+        </div>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
   <hr>
 {% include "footer.html" %}
