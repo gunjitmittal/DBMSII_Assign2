@@ -50,7 +50,6 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
-
 @login_manager.user_loader
 def load_user(id):
     return Users.query.filter_by(id=id).first()
@@ -60,10 +59,10 @@ def load_user(id):
 def get_all_posts():
     page = request.args.get('page', 1, type=int)
     form = SearchForm()
-    name = request.args.get('autocomp', '', type=str)
-    tags = request.args.get('tag_autocomp', '')
-    sortby = request.args.get('sortby',' none', type=str)
-    args = dict(request.args)
+    name = request.args.get('autocomp',"",type=str)
+    tags = request.args.get('tag_autocomp',"")
+    sortby = request.args.get('sortby','none',type=str)
+    args=dict(request.args)
     posts = Posts.query.filter_by(post_type_id=1)
     if name != "":
         posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=name)
@@ -72,13 +71,13 @@ def get_all_posts():
         q=[]
         for i in range(len(tags)):
             q.append(db.session.query(Posts).filter(Posts.tags.like('%<' + str(tags[i]) + '>%')))
-        query = q[0]
+        query=q[0]
         for i in range(len(tags)-1):
             query = query.intersect(q[i+1])
         posts = query
-    if sortby == 'Time':
+    if sortby=='Time':
         posts = posts.order_by(Posts.creation_date.desc())
-    elif sortby == 'Upvotes' or sortby == 'none':
+    elif sortby=='Upvotes' or sortby=='none':
         posts = posts.order_by(Posts.score.desc())
     posts = posts.paginate(page)
     return render_template("index.html", all_posts=posts, form=form, args=args)
@@ -91,18 +90,17 @@ def register():
         return render_template("register.html", form=form)
     elif request.method == "POST":
         if form.validate_on_submit():
-            max_index = db.session.query(func.max(Users.id)).first()
             new_user = Users(
-                id = max_index[0] + 1,
-                display_name = form.data['name'],
+                display_name=form.data['name'],
                 creation_date = datetime.now(),
                 last_access_date = datetime.now(),
-                reputation = 0,
+                reputation=0,
             )
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
             return redirect(url_for('get_all_posts'))
+    
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -134,11 +132,9 @@ def show_post(post_id):
     requested_post = Posts.query.get(post_id)
     if form.validate_on_submit():
         if current_user.is_authenticated:
-            max_index = db.session.query(func.max(Comments.id)).first()
             new_comment = Comments(
-                id = max_index[0] + 1,
-                post_id = post_id,
-                user_id = current_user.id,
+                post_id=post_id,
+                user_id=current_user.id,
                 score = 0,
                 content_license = 'cc',
                 user_display_name = current_user.display_name,
@@ -177,6 +173,15 @@ def contact():
                                 f" {request.form['email']} \n Phone: {request.form['phone']} \n Message: {request.form['message']} ")
         connection.close()
         return render_template("contact.html", submitted=True)
+
+
+
+@app.route('/profile')
+def profile():
+    page = request.args.get('page', 1, type=int)
+    posts = Posts.query.filter_by(owner_user_id=current_user.id).filter_by(post_type_id=1).paginate(page)
+    print(posts.items)
+    return render_template("profile.html", all_posts=posts)
 
 
 @admin_only
@@ -239,7 +244,6 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for('get_all_posts'))
 
-
 @app.route('/search')
 def autocomplete():
     curr_search = request.args.get('q')
@@ -247,7 +251,6 @@ def autocomplete():
     results_name = [mv.display_name for mv in query_names]
     results = results_name
     return jsonify(matching_results=results)
-
 
 @app.route('/tagsearch')
 def tagcomplete():
@@ -257,7 +260,6 @@ def tagcomplete():
     results_tag = [mv.tag_name for mv in query_tags]
     results = results_tag
     return jsonify(matching_results=results)
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
