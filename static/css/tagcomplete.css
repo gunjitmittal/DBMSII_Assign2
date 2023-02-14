@@ -4,6 +4,7 @@
 	cursor: text;
 	display: block;
 	background:#fcfdff;
+	color: #495057;
 	padding:0px;
 	transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
@@ -11,6 +12,7 @@
 .tag_complete .tags_container{
 	display:inline;
 	margin:auto 0;
+	color: #495057;
 }
 
 .tag_complete .tag_input{
@@ -77,6 +79,7 @@
 	max-height:150px;
 	overflow-y:auto;
 	overflow-x:hidden;
+	color: #495057;
 }
 
 .tag_complete_main .autocomplete li{
