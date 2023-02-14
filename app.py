@@ -6,7 +6,6 @@ import smtplib
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship, Query
 from sqlalchemy import func
-
 from flask import Flask, render_template, redirect, url_for, flash, abort, request, Response, jsonify
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
@@ -34,7 +33,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-def admin_only(f):
+def authenticated(f):
     def innerfunction(*args, **kwargs):
         if current_user.is_authenticated:
             return f(*args, **kwargs)
@@ -59,7 +58,7 @@ def load_user(id):
 def get_all_posts():
     page = request.args.get('page', 1, type=int)
     form = SearchForm()
-    name = request.args.get('autocomp',"",type=str)
+    name = request.args.get('autocomp',"",type=str).split(':')[0]
     tags = request.args.get('tag_autocomp',"")
     sortby = request.args.get('sortby','none',type=str)
     args=dict(request.args)
@@ -68,6 +67,7 @@ def get_all_posts():
         posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=name)
     if name == "" and tags!= "":
         tags = tags.split(',')
+        tags = [tag.split(':')[0] for tag in tags]
         q=[]
         for i in range(len(tags)):
             q.append(db.session.query(Posts).filter(Posts.tags.like('%<' + str(tags[i]) + '>%')))
@@ -184,12 +184,23 @@ def profile():
     return render_template("profile.html", all_posts=posts)
 
 
-@admin_only
+
+@app.route('/profile')
+def profile():
+    page = request.args.get('page', 1, type=int)
+    posts = Posts.query.filter_by(owner_user_id=current_user.id).filter_by(post_type_id=1).paginate(page)
+    print(posts.items)
+    return render_template("profile.html", all_posts=posts)
+
+
+@authenticated
 @app.route("/new-post", methods=['GET', 'POST'])
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
+        max_id = db.session.query(func.max(Posts.id)).first()
         new_post = Posts(
+            id=max_id+1,
             title=form.title.data,
             body=form.body.data,
             owner_user_id=current_user.id,
@@ -214,7 +225,7 @@ def add_new_post():
     return render_template("make-post.html", form=form)
 
 
-@admin_only
+@authenticated
 @app.route("/edit-post/<int:post_id>")
 def edit_post(post_id):
     post = Posts.query.get(post_id)
@@ -236,7 +247,7 @@ def edit_post(post_id):
     return render_template("make-post.html", form=edit_form)
 
 
-@admin_only
+@authenticated
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
     post_to_delete = Posts.query.get(post_id)
@@ -245,19 +256,19 @@ def delete_post(post_id):
     return redirect(url_for('get_all_posts'))
 
 @app.route('/search')
-def autocomplete():
+def autocomplete(): 
     curr_search = request.args.get('q')
-    query_names = db.session.query(Users.display_name).filter(Users.display_name.like('%' + str(curr_search) + '%')).order_by(Users.display_name).distinct().all()
-    results_name = [mv.display_name for mv in query_names]
-    results = results_name
-    return jsonify(matching_results=results)
+    query_names = db.session.query(Users.display_name,Users.id).filter(Users.display_name.like('%' + str(curr_search) + '%')).order_by(Users.display_name).distinct().all()
+    results_name = [mv.display_name+':'+str(mv.id) for mv in query_names]
+    results = results_name[:200]
+    return jsonify(matching_results=results) 
 
 @app.route('/tagsearch')
 def tagcomplete():
     curr_search = request.args.get('q')
     print(curr_search)
-    query_tags = db.session.query(Tags.tag_name).filter(Tags.tag_name.like('%' + str(curr_search) + '%')).distinct().all()
-    results_tag = [mv.tag_name for mv in query_tags]
+    query_tags = db.session.query(Tags.tag_name,Tags.id).filter(Tags.tag_name.like('%' + str(curr_search) + '%')).distinct().all()
+    results_tag = [mv.tag_name+':'+str(mv.id) for mv in query_tags]
     results = results_tag
     return jsonify(matching_results=results)
 

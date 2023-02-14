@@ -85,7 +85,7 @@
 
 			 //if empty abort
 			 if(lastTagNo == 0){
-				$('.tag_input').attr('placeholder','Search by tags');
+				$('.tag_input').attr('placeholder','Search tags');
 			 }
 			return true
 			}//end on delete
@@ -187,9 +187,9 @@
 			tagCompleteMain = $("<div id='"+instanceId+"' class='tag_complete_main'>"+
 									"<div class='tag_complete'>"+
 									"<div class='tags_container'></div>"+
-									"<input type='text' class='tag_input' placeholder='Search by tags' />"+
+									"<input type='text' class='tag_input' placeholder='Search tags' />"+
 									"</div>"+
-									"<ul class='autocomplete hide'></ul>"+
+									"<ul class='autocomplete hide ui-menu ui-widget ui-widget-content ui-autocomplete ui-front'></ul>"+
 									"</div>"
 								);
 
