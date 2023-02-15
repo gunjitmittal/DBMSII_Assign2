@@ -41,8 +41,11 @@
               <ul class="commentList">
                 <li>
                     <div class="commenterImage">
-                     <img src="{{ comment.user_id |string| gravatar(size=200, rating='g') }}" >
-                    </div>
+                      {% if comment.user.profile_image_url is not none and comment.user_id is not none %}
+                      <img src={{comment.user.profile_image_url}} >
+                      {%else%}
+                     <img src="{{ comment.user_id |string| gravatar(size=200, rating='x') }}" >
+                     {%endif%}
                     <div class="commentText">
                       <p>{{ comment.text | safe }}</p>
                       <span class="date sub-text">{{ comment.user_display_name }}</span>
