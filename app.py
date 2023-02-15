@@ -236,10 +236,12 @@ def contact():
 @app.route('/profile')
 def profile():
     page = request.args.get('page', 1, type=int)
-    posts = Posts.query.filter_by(owner_user_id=current_user.id).filter_by(post_type_id=1)
+    id = request.args.get('id',type=int)
+    user = Users.query.get(id)
+    posts = Posts.query.filter_by(owner_user_id=id).filter_by(post_type_id=1)
     posts = posts.order_by(Posts.creation_date.desc())
     posts=posts.paginate(page)
-    return render_template("profile.html", all_posts=posts)
+    return render_template("profile.html", all_posts=posts, user=user)
 
 
 @authenticated

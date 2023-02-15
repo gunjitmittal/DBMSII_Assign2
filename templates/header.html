@@ -74,11 +74,11 @@
     {% if current_user.is_authenticated %}
         {% if current_user.profile_image_url is not none %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}"><img src={{current_user.profile_image_url}} width = 40 height =40 style="border-radius: 50%;position: relative;top: -10px;"></a>
+              <a class="nav-link" href="{{ url_for('profile', id=current_user.id) }}"><img src={{current_user.profile_image_url}} width = 40 height =40 style="border-radius: 50%;position: relative;top: -10px;"></a>
             </li>
         {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}"><img src=""{{ current_user.id |string| gravatar(size=200, rating='g') }}"" width = 40 height =40 style="border-radius: 50%;position: relative;top: -10px;"></a>
+              <a class="nav-link" href="{{ url_for('profile', id=current_user.id )}}"><img src=""{{ current_user.id |string| gravatar(size=200, rating='g') }}"" width = 40 height =40 style="border-radius: 50%;position: relative;top: -10px;"></a>
             </li>
         {% endif %}
 

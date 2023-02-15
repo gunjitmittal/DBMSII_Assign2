@@ -19,20 +19,25 @@
   <!-- Main Content -->
   <div class="container">
     <div class="row">
-    <img src={{current_user.profile_image_url}} width = 275 height =275 style="border-radius: 50%"></a>
-    {% if current_user.user_display_name is not none %}
+    
+    {% if user.profile_image_url is not none%}
+    <img src={{user.profile_image_url}} width = 275 height =275 style="border-radius: 50%">
+    {%else%}
+   <img src="{{ user.id |string| gravatar(size=200, rating='g') }}" width = 275 height =275 style="border-radius: 50%" >
+   {%endif%}</a>
+    {% if user.user_display_name is not none %}
       <h2 ><br>
-        &nbsp&nbsp&nbsp&nbsp Username: {{current_user.display_name}}<br>
-        &nbsp&nbsp&nbsp&nbsp Account ID: {{current_user.account_id}}<br>
-        &nbsp&nbsp&nbsp&nbsp Reputation: {{current_user.reputation}}<br>
-        &nbsp&nbsp&nbsp&nbsp Total Views: {{current_user.views}}<br>
-        &nbsp&nbsp&nbsp&nbsp Upvotes : {{current_user.up_votes}}</h2>
+        &nbsp&nbsp&nbsp&nbsp Username: {{user.display_name}}<br>
+        &nbsp&nbsp&nbsp&nbsp Account ID: {{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
+        &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
+        &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
     {% else %}<br>
-      <h2 style = "text-align: left;" >&nbsp&nbsp&nbsp&nbsp Guest_User_{{current_user.account_id}}<br>
-        &nbsp&nbsp&nbsp&nbsp Account ID: {{current_user.account_id}}<br>
-        &nbsp&nbsp&nbsp&nbsp Reputation: {{current_user.reputation}}<br>
-        &nbsp&nbsp&nbsp&nbsp Total Views: {{current_user.views}}<br>
-        &nbsp&nbsp&nbsp&nbsp Upvotes : {{current_user.up_votes}}</h2>
+      <h2 style = "text-align: left;" >&nbsp&nbsp&nbsp&nbsp Guest_User_{{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Account ID: {{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
+        &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
+        &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
     {% endif %} 
     </div>
   </div>
@@ -60,8 +65,8 @@
         <hr>
         {% endfor %}
 
-        {% if all_posts.has_prev %}<a href="{{ url_for('profile', page=all_posts.prev_num) }}">&lt;&lt; Previous page</a>{% endif %} | 
-        {% if all_posts.has_next %}<a href="{{ url_for('profile', page=all_posts.next_num) }}">Next Page &gt;&gt;</a>{% endif %}
+        {% if all_posts.has_prev %}<a href="{{ url_for('profile', page=all_posts.prev_num, id=user.id) }}">&lt;&lt; Previous page</a>{% endif %} | 
+        {% if all_posts.has_next %}<a href="{{ url_for('profile', page=all_posts.next_num, id=user.id) }}">Next Page &gt;&gt;</a>{% endif %}
       </div>
     </div>
   </div>
