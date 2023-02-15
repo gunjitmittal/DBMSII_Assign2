@@ -19,6 +19,25 @@
   <!-- Main Content -->
   <div class="container">
     <div class="row">
+    <img src={{current_user.profile_image_url}} width = 275 height =275 style="border-radius: 50%"></a>
+    {% if current_user.user_display_name is not none %}
+      <h2 ><br>
+        &nbsp&nbsp&nbsp&nbsp Username: {{current_user.display_name}}<br>
+        &nbsp&nbsp&nbsp&nbsp Account ID: {{current_user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Reputation: {{current_user.reputation}}<br>
+        &nbsp&nbsp&nbsp&nbsp Total Views: {{current_user.views}}<br>
+        &nbsp&nbsp&nbsp&nbsp Upvotes : {{current_user.up_votes}}</h2>
+    {% else %}<br>
+      <h2 style = "text-align: left;" >&nbsp&nbsp&nbsp&nbsp Guest_User_{{current_user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Account ID: {{current_user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Reputation: {{current_user.reputation}}<br>
+        &nbsp&nbsp&nbsp&nbsp Total Views: {{current_user.views}}<br>
+        &nbsp&nbsp&nbsp&nbsp Upvotes : {{current_user.up_votes}}</h2>
+    {% endif %} 
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         {% for post in all_posts.items %}
         <div class="post-preview">

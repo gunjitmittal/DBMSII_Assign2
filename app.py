@@ -233,14 +233,13 @@ def contact():
         return render_template("contact.html", submitted=True)
 
 
-
 @app.route('/profile')
 def profile():
     page = request.args.get('page', 1, type=int)
-    posts = Posts.query.filter_by(owner_user_id=current_user.id).filter_by(post_type_id=1).paginate(page)
-    print(posts.items)
+    posts = Posts.query.filter_by(owner_user_id=current_user.id).filter_by(post_type_id=1)
+    posts = posts.order_by(Posts.creation_date.desc())
+    posts=posts.paginate(page)
     return render_template("profile.html", all_posts=posts)
-
 
 
 @authenticated
@@ -305,6 +304,7 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for('get_all_posts'))
 
+
 @app.route('/search')
 def autocomplete(): 
     curr_search = request.args.get('q')
@@ -312,6 +312,7 @@ def autocomplete():
     results_name = [mv.display_name+':'+str(mv.id) for mv in query_names]
     results = results_name[:200]
     return jsonify(matching_results=results) 
+
 
 @app.route('/tagsearch')
 def tagcomplete():
@@ -321,6 +322,7 @@ def tagcomplete():
     results_tag = [mv.tag_name+':'+str(mv.id) for mv in query_tags]
     results = results_tag
     return jsonify(matching_results=results)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
