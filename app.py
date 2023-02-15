@@ -149,8 +149,6 @@ def show_post(post_id):
     comments = Comments.query.filter_by(post_id=post_id).all()[:5]
     answer_posts = Posts.query.filter_by(parent_id=post_id).filter_by(post_type_id=2).all()
     answer_comments = {answer.id:Comments.query.filter_by(post_id=answer.id).all()[:5] for answer in answer_posts}
-    for answer in answer_comments:
-        print(len(answer_comments[answer]))
     # print(len(answer_posts))
     return render_template("post.html", post=requested_post, form=form, comments=comments, answer_posts=answer_posts, answer_comments=answer_comments)
  
@@ -183,14 +181,6 @@ def profile():
     print(posts.items)
     return render_template("profile.html", all_posts=posts)
 
-
-
-@app.route('/profile')
-def profile():
-    page = request.args.get('page', 1, type=int)
-    posts = Posts.query.filter_by(owner_user_id=current_user.id).filter_by(post_type_id=1).paginate(page)
-    print(posts.items)
-    return render_template("profile.html", all_posts=posts)
 
 
 @authenticated
