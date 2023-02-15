@@ -6,6 +6,7 @@ import smtplib
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship, Query
 from sqlalchemy import func
+
 from flask import Flask, render_template, redirect, url_for, flash, abort, request, Response, jsonify
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
@@ -58,14 +59,14 @@ def load_user(id):
 def get_all_posts():
     page = request.args.get('page', 1, type=int)
     form = SearchForm()
-    name = request.args.get('autocomp',"",type=str).split(':')[0]
-    tags = request.args.get('tag_autocomp',"")
-    sortby = request.args.get('sortby','none',type=str)
+    name = request.args.get('autocomp', '', type=str).split(':')[0]
+    tags = request.args.get('tag_autocomp', '')
+    sortby = request.args.get('sortby', 'none', type=str)
     args=dict(request.args)
     posts = Posts.query.filter_by(post_type_id=1)
     if name != "":
         posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=name)
-    if name == "" and tags!= "":
+    if name == "" and tags != "":
         tags = tags.split(',')
         tags = [tag.split(':')[0] for tag in tags]
         q=[]
@@ -75,9 +76,9 @@ def get_all_posts():
         for i in range(len(tags)-1):
             query = query.intersect(q[i+1])
         posts = query
-    if sortby=='Time':
+    if sortby == 'Time':
         posts = posts.order_by(Posts.creation_date.desc())
-    elif sortby=='Upvotes' or sortby=='none':
+    elif sortby == 'Upvotes' or sortby == 'none':
         posts = posts.order_by(Posts.score.desc())
     posts = posts.paginate(page)
     return render_template("index.html", all_posts=posts, form=form, args=args)
@@ -90,11 +91,13 @@ def register():
         return render_template("register.html", form=form)
     elif request.method == "POST":
         if form.validate_on_submit():
+            max_index = db.session.query(func.max(Users.id)).first()
             new_user = Users(
-                display_name=form.data['name'],
+                id = max_index[0] + 1,
+                display_name = form.data['name'],
                 creation_date = datetime.now(),
                 last_access_date = datetime.now(),
-                reputation=0,
+                reputation = 0,
             )
             db.session.add(new_user)
             db.session.commit()
@@ -132,13 +135,15 @@ def show_post(post_id):
     requested_post = Posts.query.get(post_id)
     if form.validate_on_submit():
         if current_user.is_authenticated:
+            max_index = db.session.query(func.max(Comments.id)).first()
             new_comment = Comments(
-                post_id=post_id,
-                user_id=current_user.id,
+                id = max_index[0] + 1,
+                post_id = post_id,
+                user_id = current_user.id,
                 score = 0,
-                content_license = 'cc',
+                content_license = 'CC',
                 user_display_name = current_user.display_name,
-                text=form.data['body'],
+                text = form.data['body'],
                 creation_date = datetime.now()
             )
             db.session.add(new_comment)
