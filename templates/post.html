@@ -32,7 +32,6 @@
               </div>
             {% endif %}
           {{ ckeditor.load() }}
-        {{ ckeditor.config(name='body') }}
           {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
 
 
@@ -42,7 +41,7 @@
               <ul class="commentList">
                 <li>
                     <div class="commenterImage">
-                     <img src="{{ comment.user_id |string| gravatar(size=200, rating='x') }}" >
+                     <img src="{{ comment.user_id |string| gravatar(size=200, rating='g') }}" >
                     </div>
                     <div class="commentText">
                       <p>{{ comment.text | safe }}</p>
@@ -68,7 +67,11 @@
                 <ul class="commentList">
                   <li>
                       <div class="commenterImage">
+                        {% if comment.user.profile_image_url is not none and comment.user_id is not none %}
+                        <img src={{comment.user.profile_image_url}} >
+                        {%else%}
                        <img src="{{ comment.user_id |string| gravatar(size=200, rating='x') }}" >
+                       {%endif%}
                       </div>
                       <div class="commentText">
                         <p>{{ comment.text | safe }}</p>
