@@ -32,10 +32,10 @@
               </div>
             {% endif %}
           {{ ckeditor.load() }}
-          {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+          {{ wtf.quick_form(comment_form, novalidate=True, button_map={"submit": "primary"}) }}
 
 
-<!--           Comments Area -->
+<!-- Comments Area -->
           <div class="col-lg-8 col-md-10 mx-auto comment">
             {% for comment in comments %}
               <ul class="commentList">
@@ -58,6 +58,10 @@
       </div>
     </div>
   </article>
+  <div class="col-lg-8 col-md-10 mx-auto">
+    {{ ckeditor.load() }}
+    {{ wtf.quick_form(answer_form, novalidate=True, button_map={"submit": "primary"}) }}
+  </div>
   {% for answer in answer_posts %}
   <article>
     <div class="container">

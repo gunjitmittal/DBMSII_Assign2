@@ -103,7 +103,6 @@ def register():
             db.session.commit()
             login_user(new_user)
             return redirect(url_for('get_all_posts'))
-    
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -131,9 +130,38 @@ def logout():
 
 @app.route("/post/<int:post_id>", methods=['POST', 'GET'])
 def show_post(post_id):
-    form = CommentForm()
+    comment_form = CommentForm()
+    answer_form = AnswerForm()
     requested_post = Posts.query.get(post_id)
-    if form.validate_on_submit():
+
+    if answer_form.validate_on_submit():
+        if current_user.is_authenticated:
+            max_index = db.session.query(func.max(Posts.id)).first()
+            new_answer = Posts(
+                id = max_index[0] + 1,
+                owner_user_id = current_user.id,
+                last_editor_user_id = current_user.id,
+                post_type_id = 2,
+                score = 0,
+                parent_id = post_id,
+                view_count = 0,
+                answer_count = 0,
+                comment_count = 0,
+                owner_display_name = current_user.display_name,
+                last_editor_display_name = current_user.display_name,
+                content_license = 'CC',
+                body = answer_form.data['body'],
+                creation_date = datetime.now(),
+                last_edit_date = datetime.now(),
+                last_activity_date = datetime.now()
+            )
+            db.session.add(new_answer)
+            db.session.commit()
+        else:
+            flash("You need to login or register first.")
+            return redirect(url_for('login'))
+
+    elif comment_form.validate_on_submit():
         if current_user.is_authenticated:
             max_index = db.session.query(func.max(Comments.id)).first()
             new_comment = Comments(
@@ -143,7 +171,7 @@ def show_post(post_id):
                 score = 0,
                 content_license = 'CC',
                 user_display_name = current_user.display_name,
-                text = form.data['body'],
+                text = comment_form.data['body'],
                 creation_date = datetime.now()
             )
             db.session.add(new_comment)
@@ -151,11 +179,38 @@ def show_post(post_id):
         else:
             flash("You need to login or register first.")
             return redirect(url_for('login'))
+    """
+    elif answer_form.validate_on_submit():
+        if current_user.is_authenticated:
+            max_index = db.session.query(func.max(Posts.id)).first()
+            new_answer = Posts(
+                id = max_index[0] + 1,
+                owner_user_id = current_user.id,
+                last_editor_user_id = current_user.id,
+                post_type_id = 2,
+                score = 0,
+                parent_id = post_id,
+                view_count = 0,
+                answer_count = 0,
+                comment_count = 0,
+                owner_display_name = current_user.display_name,
+                last_editor_display_name = current_user.display_name,
+                content_license = 'CC',
+                body = answer_form.data['body'],
+                creation_date = datetime.now(),
+                last_edit_date = datetime.now(),
+                last_activity_date = datetime.now()
+            )
+            db.session.add(new_answer)
+            db.session.commit()
+        else:
+            flash("You need to login or register first.")
+            return redirect(url_for('login'))
+"""
     comments = Comments.query.filter_by(post_id=post_id).all()[:5]
     answer_posts = Posts.query.filter_by(parent_id=post_id).filter_by(post_type_id=2).all()
     answer_comments = {answer.id:Comments.query.filter_by(post_id=answer.id).all()[:5] for answer in answer_posts}
-    # print(len(answer_posts))
-    return render_template("post.html", post=requested_post, form=form, comments=comments, answer_posts=answer_posts, answer_comments=answer_comments)
+    return render_template("post.html", post=requested_post, comment_form=comment_form, comments=comments, answer_form=answer_form, answer_posts=answer_posts, answer_comments=answer_comments)
  
 
 @app.route("/about")
@@ -193,9 +248,9 @@ def profile():
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
-        max_id = db.session.query(func.max(Posts.id)).first()
+        max_index = db.session.query(func.max(Posts.id)).first()
         new_post = Posts(
-            id=max_id+1,
+            id = max_index[0] + 1,
             title=form.title.data,
             body=form.body.data,
             owner_user_id=current_user.id,
@@ -208,7 +263,7 @@ def add_new_post():
             owner_display_name=current_user.display_name,
             last_editor_display_name=current_user.display_name,
             tags = '<'+form.tags.data.replace(',','><')+'>',
-            content_license='cc',
+            content_license='CC',
             favorite_count=0,
             creation_date=datetime.now(),
             last_edit_date=datetime.now(),

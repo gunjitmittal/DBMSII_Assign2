@@ -8,17 +8,17 @@ class CreatePostForm(FlaskForm):
     title = StringField("Blog Post Title", validators=[DataRequired()])
     tags = StringField("Tags",id= 'tag_autocomplete' ,validators=[DataRequired()])
     body = CKEditorField("Blog Content", validators=[DataRequired()])
-    submit = SubmitField("Submit Post")
+    submit = SubmitField("SUBMIT POST")
 
 
 class RegistrationForm(FlaskForm):
     name = StringField("Display Name", validators=[DataRequired()])
-    submit = SubmitField("SIGN ME UP!")
+    submit = SubmitField("REGISTER")
 
 class LoginForm(FlaskForm):
     id = StringField("ID", validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField("LET ME IN!")
+    submit = SubmitField("LOGIN")
 
 
 class CommentForm(FlaskForm):
@@ -29,4 +29,8 @@ class SearchForm(FlaskForm):
     autocomp = TextField("",id='autocomplete',render_kw={"placeholder": "Search by name"})
     tag_autocomp = TextField("",id= 'tag_autocomplete',render_kw={"placeholder": "Search by tag"})
     sortby = SelectField('Sort by', choices=[('none',"Sort By"), ('Time','Time'), ('Upvotes','Upvotes')])
-    submit = SubmitField("search")
+    submit = SubmitField("SEARCH")
+
+class AnswerForm(FlaskForm):
+    body = CKEditorField("Answer", validators=[DataRequired()])
+    submit = SubmitField("SUBMIT ANSWER")
