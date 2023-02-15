@@ -71,9 +71,16 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
     {% if current_user.is_authenticated %}
+        {% if current_user.profile_image_url is not none %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+              <a class="nav-link" href="{{ url_for('profile') }}"><img src={{current_user.profile_image_url}} width = 20 height =20></a>
             </li>
+        {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}"><img src="https://0.gravatar.com/avatar/d5279c8b66d25549a0ec3c8dd46a3d1a?s=120" width = 20 height =20></a>
+            </li>
+        {% endif %}
+
       {% endif %}
           </li>
         </ul>
