@@ -187,7 +187,7 @@
 			tagCompleteMain = $("<div id='"+instanceId+"' class='tag_complete_main'>"+
 									"<div class='tag_complete'>"+
 									"<div class='tags_container'></div>"+
-									"<input type='text' class='tag_input' placeholder='Search tags' />"+
+									"<input type='text' class='tag_input' placeholder='Search tags' style='text-align:start' />"+
 									"</div>"+
 									"<ul class='autocomplete hide ui-menu ui-widget ui-widget-content ui-autocomplete ui-front'></ul>"+
 									"</div>"
