@@ -83,8 +83,8 @@ def get_all_posts():
     elif sortby == 'Upvotes' or sortby == 'none':
         posts = posts.order_by(Posts.score.desc())
     posts = posts.paginate(page)
-    all_tags = db.session.query(Tags.tag_name).all()
-    all_tags = sum(all_tags, tuple())
+    all_tags = db.session.query(Tags.tag_name,Tags.id).all()
+    all_tags = [tag.tag_name+':'+str(tag.id) for tag in all_tags]
     return render_template("index.html", all_posts=posts, form=form, args=args, all_tags=all_tags)
 
 
