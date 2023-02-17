@@ -10,21 +10,21 @@
           <div class="site-heading">
             <h1>Gunjit's Blog</h1>
             <span class="subheading">A collection of random musings.</span>
-            
-            <form class='form-inline' method='GET'>
-              <div class='form-group'>
-                {{ form.autocomp.label }} {{ form.autocomp(class="form-control") }}
-              </div>
-              <div class="form-group">
-                  {{ form.tag_autocomp.label }} {{ form.tag_autocomp(class="form-control") }}
-              </div>
-              <div class='form-group'> 
-                {{ form.sortby(class="form-control") }}
-              </div>
-              <div class="form-group">
-                  {{ form.submit(class="btn btn-light"  ,style='border-radius:7px;padding-top: 10px;
-                  padding-bottom: 10px;') }}
-              </div>
+            <hr><hr>
+            <form class='form-inline' method='GET' style='display:block;width:100%'>
+                    <div class='form-group suraj'>
+                      {{ form.newtag.label }} {{ form.newtag(class="form-control") }}
+                </div>
+                  <div class='form-group' style="display: table-cell;width: 70%;">
+                    {{ form.autocomp.label }} {{ form.autocomp(class="form-control") }}
+                  </div>
+                  <div class='form-group' style="display: table-cell;width: 100%;"> 
+                    {{ form.sortby(class="form-control") }}
+                  </div>
+                  <div class="form-group" style="display: table-cell;width: auto;">
+                      {{ form.submit(class="btn btn-light"  ,style='border-radius:7px;padding-top: 10px;
+                      padding-bottom: 10px;') }}
+                  </div>
             </form>
           </div>
           
@@ -87,34 +87,62 @@
           });
       })
     </script>
-    <script>
-      $(function(){
-        var defaultOpts = {
-          keyLimit: 1,
-          hide:false,
-          freeInput:false,
-          freeEdit:false,
-        };
-        $("#tag_autocomplete").tagComplete({ 	 	autocomplete:{ajaxOpts:{
-						
-          url: "{{url_for('tagcomplete')}}",
-          },
-          params: function(value){
-						
-            return {q:value};
-          },
-          proccessData: function(data){
+      <script>
+        var inputElm = document.querySelector('input[name=newtag]'),
+        whitelist = {{all_tags|tojson}};
+        var tagify = new Tagify(inputElm, {
+            enforceWhitelist: true,
+            whitelist: inputElm.value.trim().split(/\s*,\s*/)
+        })
+        tagify.on('add', onAddTag)
+              .on('remove', onRemoveTag)
+              .on('input', onInput)
+              .on('edit', onTagEdit)
+              .on('invalid', onInvalidTag)
+              .on('click', onTagClick)
+              .on('focus', onTagifyFocusBlur)
+              .on('blur', onTagifyFocusBlur)
+              .on('dropdown:hide dropdown:show', e => console.log(e.type))
+              .on('dropdown:select', onDropdownSelect)
 
-            //return the data
-            console.log(data);
-           return data.matching_results;
-        }//end proccess ajax data,
-        
-    
-      }//end auto complete 
-       });
-       
-    });
+        var mockAjax = (function mockAjax(){
+            var timeout;
+            return function(duration){
+                clearTimeout(timeout); // abort last request
+                return new Promise(function(resolve, reject){
+                    timeout = setTimeout(resolve, duration || 700, whitelist)
+                })
+            }
+        })()
+        function onAddTag(e){
+            tagify.off('add', onAddTag)
+        }
+        function onRemoveTag(e){
+        }
+        function onInput(e){
+            tagify.whitelist = null; // reset the whitelist
+            mockAjax()
+                .then(function(result){
+                    tagify.settings.whitelist = result.concat(tagify.value) 
+                    tagify
+                        .loading(false)
+                        .dropdown.show(e.detail.value);
+                })
+                .catch(err => tagify.dropdown.hide())
+        }
+        function onTagEdit(e){
+        }
+        function onInvalidTag(e){
+        }
+        function onTagClick(e){
+        }
+
+        function onTagifyFocusBlur(e){
+        }
+
+        function onDropdownSelect(e){
+
+        }
       </script>
       </div>
     </div>

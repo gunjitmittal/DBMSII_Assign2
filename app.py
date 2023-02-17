@@ -1,4 +1,5 @@
 import os
+import select
 import dotenv
 import json
 from datetime import date, datetime
@@ -60,20 +61,21 @@ def get_all_posts():
     page = request.args.get('page', 1, type=int)
     form = SearchForm()
     name = request.args.get('autocomp', '', type=str).split(':')[0]
-    tags = request.args.get('tag_autocomp', '')
+    tags1 = request.args.get('newtag', '')
     sortby = request.args.get('sortby', 'none', type=str)
     args=dict(request.args)
     posts = Posts.query.filter_by(post_type_id=1)
     if name != "":
         posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=name)
-    if name == "" and tags != "":
-        tags = tags.split(',')
-        tags = [tag.split(':')[0] for tag in tags]
+    if name == "" and tags1 != "":
+        tags1 = [tag['value'] for tag in json.loads(tags1)]
+        print(tags1)
+        tags1 = [tag.split(':')[0] for tag in tags1]
         q=[]
-        for i in range(len(tags)):
-            q.append(db.session.query(Posts).filter(Posts.tags.like('%<' + str(tags[i]) + '>%')))
+        for i in range(len(tags1)):
+            q.append(db.session.query(Posts).filter(Posts.tags.like('%<' + str(tags1[i]) + '>%')))
         query=q[0]
-        for i in range(len(tags)-1):
+        for i in range(len(tags1)-1):
             query = query.intersect(q[i+1])
         posts = query
     if sortby == 'Time':
@@ -81,7 +83,9 @@ def get_all_posts():
     elif sortby == 'Upvotes' or sortby == 'none':
         posts = posts.order_by(Posts.score.desc())
     posts = posts.paginate(page)
-    return render_template("index.html", all_posts=posts, form=form, args=args)
+    all_tags = db.session.query(Tags.tag_name).all()
+    all_tags = sum(all_tags, tuple())
+    return render_template("index.html", all_posts=posts, form=form, args=args, all_tags=all_tags)
 
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -248,6 +252,8 @@ def profile():
 @app.route("/new-post", methods=['GET', 'POST'])
 def add_new_post():
     form = CreatePostForm()
+    all_tags = db.session.query(Tags.tag_name).all()
+    all_tags = sum(all_tags, tuple())
     if form.validate_on_submit():
         max_index = db.session.query(func.max(Posts.id)).first()
         new_post = Posts(
@@ -273,7 +279,7 @@ def add_new_post():
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+    return render_template("make-post.html", form=form, all_tags=all_tags)
 
 
 @authenticated

@@ -30,8 +30,8 @@
           <div class='form-group'>
             {{ form.title.label }} {{ form.title(class="form-control") }}
           </div>
-          <div class="form-group">
-              {{ form.tags.label }} {{ form.tags(class="form-control") }}
+          <div class='form-group'>
+            {{ form.newtag.label }} {{ form.newtag(class="form-control") }}
           </div>
           <div class='form-group'> 
             {{ form.body(class="form-control") }}
@@ -44,32 +44,60 @@
     </div>
   </div>
   <script>
-    $(function(){
-      var defaultOpts = {
-        keyLimit: 1,
-        hide:false,
-        freeInput:false,
-        freeEdit:false,
-      };
-      $("#tag_autocomplete").tagComplete({ 	 	autocomplete:{ajaxOpts:{
-          
-        url: "{{url_for('tagcomplete')}}",
-        },
-        params: function(value){
-          
-          return {q:value};
-        },
-        proccessData: function(data){
+    var inputElm = document.querySelector('input[name=newtag]'),
+    whitelist = {{all_tags|tojson}};
+    var tagify = new Tagify(inputElm, {
+        enforceWhitelist: true,
+        whitelist: inputElm.value.trim().split(/\s*,\s*/)
+    })
+    tagify.on('add', onAddTag)
+          .on('remove', onRemoveTag)
+          .on('input', onInput)
+          .on('edit', onTagEdit)
+          .on('invalid', onInvalidTag)
+          .on('click', onTagClick)
+          .on('focus', onTagifyFocusBlur)
+          .on('blur', onTagifyFocusBlur)
+          .on('dropdown:hide dropdown:show', e => console.log(e.type))
+          .on('dropdown:select', onDropdownSelect)
 
-          //return the data
-          console.log(data);
-         return data.matching_results;
-      }//end proccess ajax data,
-      
-  
-    }//end auto complete 
-     });
-     
-  });
-    </script>
+    var mockAjax = (function mockAjax(){
+        var timeout;
+        return function(duration){
+            clearTimeout(timeout); // abort last request
+            return new Promise(function(resolve, reject){
+                timeout = setTimeout(resolve, duration || 700, whitelist)
+            })
+        }
+    })()
+    function onAddTag(e){
+        tagify.off('add', onAddTag)
+    }
+    function onRemoveTag(e){
+    }
+    function onInput(e){
+        tagify.whitelist = null; // reset the whitelist
+        mockAjax()
+            .then(function(result){
+                tagify.settings.whitelist = result.concat(tagify.value) 
+                tagify
+                    .loading(false)
+                    .dropdown.show(e.detail.value);
+            })
+            .catch(err => tagify.dropdown.hide())
+    }
+    function onTagEdit(e){
+    }
+    function onInvalidTag(e){
+    }
+    function onTagClick(e){
+    }
+
+    function onTagifyFocusBlur(e){
+    }
+
+    function onDropdownSelect(e){
+
+    }
+  </script>
 {% include "footer.html" %}
