@@ -35,3 +35,7 @@ class SearchForm(FlaskForm):
 class AnswerForm(FlaskForm):
     body = CKEditorField("Answer", validators=[DataRequired()])
     submit = SubmitField("SUBMIT ANSWER")
+
+class AnswerCommentForm(FlaskForm):
+    body = CKEditorField("Comment", validators=[DataRequired()])
+    submit = SubmitField("SUBMIT COMMENT")

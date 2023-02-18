@@ -68,8 +68,13 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <hr><hr><hr>
+        </div>
+        <div class="col-lg-8 col-md-10 mx-auto" style="background:rgb(237, 232, 232);">
             {{ answer.body|safe }}
-            
+            <div class="col-lg-8 col-md-10 mx-auto">
+              {{ ckeditor.load() }}
+              {{ wtf.quick_form(answer_comment_forms[loop.index0], novalidate=True, button_map={"submit": "primary"}) }}
+            </div>
             <div class="col-lg-8 col-md-10 mx-auto comment">
               {% for comment in answer_comments[answer.id] %}
                 <ul class="commentList">
