@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm,Form
-from wtforms import StringField, SubmitField,TextField, PasswordField, SelectField
+from wtforms import StringField, SubmitField,TextField, PasswordField, SelectField, HiddenField
 from wtforms.validators import DataRequired, URL, Email
 from flask_ckeditor import CKEditorField
 
@@ -33,9 +33,10 @@ class SearchForm(FlaskForm):
     submit = SubmitField("SEARCH")
 
 class AnswerForm(FlaskForm):
-    body = CKEditorField("Answer", validators=[DataRequired()])
+    body1 = CKEditorField("Answer", validators=[DataRequired()])
     submit = SubmitField("SUBMIT ANSWER")
 
 class AnswerCommentForm(FlaskForm):
-    body = CKEditorField("Comment", validators=[DataRequired()])
+    body2 = CKEditorField("Comment" ,validators=[DataRequired()])
+    post_id = HiddenField(validators=[DataRequired()])
     submit = SubmitField("SUBMIT COMMENT")

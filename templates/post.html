@@ -1,5 +1,16 @@
 {% include "header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% macro quick_form(form,
+  action="",
+  method="post",
+  extra_classes=None,
+  role="form",
+  form_type="basic",
+  horizontal_columns=('lg', 2, 10),
+  enctype=None,
+  button_map={},
+  id="") %}
+  {% endmacro %}
   <!-- Page Header -->
   <header class="masthead">
     <div class="overlay"></div>
@@ -31,8 +42,9 @@
                 <a class="btn btn-primary float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
               </div>
             {% endif %}
-          {{ ckeditor.load() }}
-          {{ wtf.quick_form(comment_form, novalidate=True, button_map={"submit": "primary"}) }}
+            {{ ckeditor.load() }}
+            {{ wtf.quick_form(answer_form, novalidate=True, button_map={"submit": "primary"}) }}
+          
 
 
 <!-- Comments Area -->
@@ -54,15 +66,31 @@
                 </li>
               </ul>
             {% endfor %}
-
+            <button class='btn' onclick={{"toggle"+post.id|string+"()"}}>Add Comment</button>
+              <div id={{'commentform'+post.id|string}} style="display:none">
+                {{ wtf.quick_form(comment_form, novalidate=True, button_map={"submit": "primary"}) }}
+                {{ ckeditor.load() }}
+                {{ckeditor.config(name='body', toolbar='Basic', height=100)}}
+              </div>
       </div>
     </div>
   </article>
+  <script>
+    function {{"toggle"+post.id|string+"()"}} {
+      var x = document.getElementById("{{'commentform'+post.id|string}}");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
   <div class="col-lg-8 col-md-10 mx-auto">
-    {{ ckeditor.load() }}
-    {{ wtf.quick_form(answer_form, novalidate=True, button_map={"submit": "primary"}) }}
+    
   </div>
   {% for answer in answer_posts %}
+  {% set uid = 'commentform'+answer.id|string %}
+  {% set ufunc = 'toggle' +answer.id|string + "()" %}
   <article>
     <div class="container">
       <div class="row">
@@ -72,9 +100,27 @@
         <div class="col-lg-8 col-md-10 mx-auto" style="background:rgb(237, 232, 232);">
             {{ answer.body|safe }}
             <div class="col-lg-8 col-md-10 mx-auto">
-              {{ ckeditor.load() }}
-              {{ wtf.quick_form(answer_comment_forms[loop.index0], novalidate=True, button_map={"submit": "primary"}) }}
+              
+              
+              <button class='btn' onclick={{ufunc}}>Add Comment</button>
+              <div id={{uid}} style='display:none'>
+              <form method='POST' novalidate>
+                {% set form=answer_comment_form%}
+                <div class='form-group'>
+                  {{ form.body2.label }} {{ form.body2(class="form-control") }}
+                </div>
+                <div class='form-group' hidden>
+                    {{ form.post_id(value=answer.id)}}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-sm") }}
+                </div>
+                {{form.csrf_token}}
+                {{ ckeditor.load() }}
+            </form>
+          </div>
             </div>
+
             <div class="col-lg-8 col-md-10 mx-auto comment">
               {% for comment in answer_comments[answer.id] %}
                 <ul class="commentList">
@@ -97,6 +143,16 @@
       </div>
     </div>
   </article>
+  <script>
+    function {{ufunc}} {
+      var x = document.getElementById("{{uid}}");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
   {% endfor %}
   <hr>
 {% include "footer.html" %}

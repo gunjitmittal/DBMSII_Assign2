@@ -137,75 +137,80 @@ def show_post(post_id):
     comment_form = CommentForm()
     answer_form = AnswerForm()
     requested_post = Posts.query.get(post_id)
+    answer_comment_form = AnswerCommentForm()
+    comments = Comments.query.filter_by(post_id=post_id).all()[:5]
+    answer_posts = Posts.query.filter_by(parent_id=post_id).filter_by(post_type_id=2).all()
+    answer_comments = {answer.id:Comments.query.filter_by(post_id=answer.id).all()[:5] for answer in answer_posts}
 
-    if answer_form.validate_on_submit():
-        if current_user.is_authenticated:
-            max_index = db.session.query(func.max(Posts.id)).first()
-            new_answer = Posts(
-                id = max_index[0] + 1,
-                owner_user_id = current_user.id,
-                last_editor_user_id = current_user.id,
-                post_type_id = 2,
-                score = 0,
-                parent_id = post_id,
-                view_count = 0,
-                answer_count = 0,
-                comment_count = 0,
-                owner_display_name = current_user.display_name,
-                last_editor_display_name = current_user.display_name,
-                content_license = 'CC',
-                body = answer_form.data['body'],
-                creation_date = datetime.now(),
-                last_edit_date = datetime.now(),
-                last_activity_date = datetime.now()
-            )
-            db.session.add(new_answer)
-            db.session.commit()
-            requested_post.answer_count += 1
-            db.session.commit()
-
-        else:
-            flash("You need to login or register first.")
-            return redirect(url_for('login'))
-
-    elif comment_form.validate_on_submit():
-        if current_user.is_authenticated:
-            max_index = db.session.query(func.max(Comments.id)).first()
-            new_comment = Comments(
-                id = max_index[0] + 1,
-                post_id = post_id,
-                user_id = current_user.id,
-                score = 0,
-                content_license = 'CC',
-                user_display_name = current_user.display_name,
-                text = comment_form.data['body'],
-                creation_date = datetime.now()
-            )
-            db.session.add(new_comment)
-            db.session.commit()
-            requested_post.comment_count += 1
-            db.session.commit()
-
-        else:
-            flash("You need to login or register first.")
-            return redirect(url_for('login'))
-
-    answer_comment_forms = []
-    for answer in Posts.query.filter_by(parent_id=post_id).filter_by(post_type_id=2).all():
-        answer_comment_form = AnswerCommentForm()
-        answer_comment_forms.append(answer_comment_form)
-        if answer_comment_form.validate_on_submit():
-            already_query = Comments.query.filter_by(user_id=current_user.id).filter_by(text=answer_comment_form.data['body']).filter(str(Comments.creation_date)[:19] == str(datetime.now())[:19])
-            if already_query.count() == 0 and current_user.is_authenticated:
-                max_index = db.session.query(func.max(Comments.id)).first()
-                new_answer_comment = Comments(
+    if request.method == "POST":
+        print(answer_comment_form.data)
+        print(comment_form.data)
+        print(answer_form.data)
+        if answer_form.validate_on_submit():
+            if current_user.is_authenticated:
+                max_index = db.session.query(func.max(Posts.id)).first()
+                new_answer = Posts(
                     id = max_index[0] + 1,
-                    post_id = answer.id,
+                    owner_user_id = current_user.id,
+                    last_editor_user_id = current_user.id,
+                    post_type_id = 2,
+                    score = 0,
+                    parent_id = post_id,
+                    view_count = 0,
+                    answer_count = 0,
+                    comment_count = 0,
+                    owner_display_name = current_user.display_name,
+                    last_editor_display_name = current_user.display_name,
+                    content_license = 'CC',
+                    body = answer_form.data['body1'],
+                    creation_date = datetime.now(),
+                    last_edit_date = datetime.now(),
+                    last_activity_date = datetime.now()
+                )
+                db.session.add(new_answer)
+                db.session.commit()
+                requested_post.answer_count += 1
+                db.session.commit()
+
+            else:
+                flash("You need to login or register first.")
+                return redirect(url_for('login'))
+
+        elif comment_form.validate_on_submit():
+            if current_user.is_authenticated:
+                max_index = db.session.query(func.max(Comments.id)).first()
+                new_comment = Comments(
+                    id = max_index[0] + 1,
+                    post_id = post_id,
                     user_id = current_user.id,
                     score = 0,
                     content_license = 'CC',
                     user_display_name = current_user.display_name,
-                    text = answer_comment_form.data['body'],
+                    text = comment_form.data['body'],
+                    creation_date = datetime.now()
+                )
+                db.session.add(new_comment)
+                db.session.commit()
+                requested_post.comment_count += 1
+                db.session.commit()
+
+            else:
+                flash("You need to login or register first.")
+                return redirect(url_for('login'))
+
+        elif answer_comment_form.validate_on_submit():
+            print('just added')
+            already_query = Comments.query.filter_by(user_id=current_user.id).filter_by(text=answer_comment_form.data['body2']).filter(str(Comments.creation_date)[:19] == str(datetime.now())[:19])
+            if already_query.count() == 0 and current_user.is_authenticated:
+                max_index = db.session.query(func.max(Comments.id)).first()
+                new_answer_comment = Comments(
+                    id = max_index[0] + 1,
+                    post_id = answer_comment_form.data['post_id'],
+                    user_id = current_user.id,
+                    score = 0,
+                    content_license = 'CC',
+                    user_display_name = current_user.display_name,
+                    text = answer_comment_form.data['body2'],
                     creation_date = datetime.now()
                 )
                 db.session.add(new_answer_comment)
@@ -213,11 +218,10 @@ def show_post(post_id):
             elif already_query.count() == 0:
                 flash("You need to login or register first.")
                 return redirect(url_for('login'))
+        return render_template("post.html", post=requested_post, comment_form=comment_form, comments=comments, answer_form=answer_form, answer_posts=answer_posts, answer_comments=answer_comments, answer_comment_form=answer_comment_form)
     
-    comments = Comments.query.filter_by(post_id=post_id).all()[:5]
-    answer_posts = Posts.query.filter_by(parent_id=post_id).filter_by(post_type_id=2).all()
-    answer_comments = {answer.id:Comments.query.filter_by(post_id=answer.id).all()[:5] for answer in answer_posts}
-    return render_template("post.html", post=requested_post, comment_form=comment_form, comments=comments, answer_form=answer_form, answer_posts=answer_posts, answer_comments=answer_comments, answer_comment_forms=answer_comment_forms)
+    
+    return render_template("post.html", post=requested_post, comment_form=comment_form, comments=comments, answer_form=answer_form, answer_posts=answer_posts, answer_comments=answer_comments, answer_comment_form=answer_comment_form)
  
 
 @app.route("/about")
