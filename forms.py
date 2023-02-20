@@ -6,7 +6,7 @@ from flask_ckeditor import CKEditorField
 # WTForm
 class CreatePostForm(FlaskForm):
     title = StringField("Blog Post Title", validators=[DataRequired()])
-    newtag = StringField("Tags",id= 'tag_autocomplete' ,validators=[DataRequired()])
+    newtag = StringField("Tags",id= 'tag_autocomplete' ,validators=[DataRequired()],render_kw={"placeholder": "Add tags"})
     body = CKEditorField("Blog Content", validators=[DataRequired()])
     submit = SubmitField("SUBMIT POST")
 

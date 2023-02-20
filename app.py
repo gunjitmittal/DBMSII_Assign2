@@ -259,8 +259,8 @@ def profile():
 @app.route("/new-post", methods=['GET', 'POST'])
 def add_new_post():
     form = CreatePostForm()
-    all_tags = db.session.query(Tags.tag_name).all()
-    all_tags = sum(all_tags, tuple())
+    all_tags = db.session.query(Tags.tag_name,Tags.id).all()
+    all_tags = [tag.tag_name+':'+str(tag.id) for tag in all_tags]
     if form.validate_on_submit():
         max_index = db.session.query(func.max(Posts.id)).first()
         new_post = Posts(

@@ -10,33 +10,32 @@
           <div class="site-heading">
             <h1>Gunjit's Blog</h1>
             <span class="subheading">A collection of random musings.</span>
-            <hr><hr>
-            <form class='form-inline' method='GET' style='display:block;width:100%'>
-                    <div class='form-group'>
-                      {{ form.newtag.label }} {{ form.newtag(class="form-control") }}
-                </div>
-                  <div class='form-group' style="display: table-cell;width: 70%;">
-                    {{ form.autocomp.label }} {{ form.autocomp(class="form-control") }}
-                  </div>
-                  <div class='form-group' style="display: table-cell;width: 100%;"> 
-                    {{ form.sortby(class="form-control") }}
-                  </div>
-                  <div class="form-group" style="display: table-cell;width: auto;">
-                      {{ form.submit(class="btn btn-light"  ,style='border-radius:7px;padding-top: 10px;
-                      padding-bottom: 10px;') }}
-                  </div>
-            </form>
           </div>
-          
         </div>
-        
+        <div class="col-lg-10 col-md-12 mx-auto search-form">
+          <form class='form-inline' method='GET' style='display:block;width:100%'>
+            <div class='form-group'>
+              {{ form.newtag.label }} {{ form.newtag(class="form-control") }}
+        </div>
+          <div class='form-group' style="display: table-cell;width: 70%;">
+            {{ form.autocomp.label }} {{ form.autocomp(class="form-control") }}
+          </div>
+          <div class='form-group' style="display: table-cell;width: 100%;"> 
+            {{ form.sortby(class="form-control") }}
+          </div>
+          <div class="form-group" style="display: table-cell;width: auto;">
+              {{ form.submit(class="btn btn-light"  ,style='border-radius:7px;padding-top: 10px;
+              padding-bottom: 10px;') }}
+          </div>
+    </form>
+        </div>
       </div>
       
     </div>
   </header>
 
   <!-- Main Content -->
-  <div class="container">
+  <div class="">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
        <!--{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}-->

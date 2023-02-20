@@ -14,7 +14,7 @@
   <!-- Page Header -->
   <header class="masthead">
     <div class="overlay"></div>
-    <div class="container">
+    <div class="">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
@@ -32,9 +32,9 @@
 
   <!-- Post Content -->
   <article>
-    <div class="container">
+    <div class="">
       <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="col-lg-10 col-md-12 mx-auto">
             {{ post.body|safe }}
           <hr>
             {% if current_user.id==post.owner_user_id %}
@@ -48,7 +48,7 @@
 
 
 <!-- Comments Area -->
-          <div class="col-lg-8 col-md-10 mx-auto comment">
+          <div class="col-lg-10 col-md-12 mx-auto comment">
             {% for comment in comments %}
               <ul class="commentList">
                 <li>
@@ -85,43 +85,18 @@
       }
     }
   </script>
-  <div class="col-lg-8 col-md-10 mx-auto">
-    
-  </div>
   {% for answer in answer_posts %}
   {% set uid = 'commentform'+answer.id|string %}
   {% set ufunc = 'toggle' +answer.id|string + "()" %}
   <article>
-    <div class="container">
+    <div class="">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <hr><hr><hr>
         </div>
-        <div class="col-lg-8 col-md-10 mx-auto" style="background:rgb(237, 232, 232);">
+        <div class="col-lg-8 col-md-10 mx-auto" style="background: rgb(184 209 242 / 30%);">
             {{ answer.body|safe }}
-            <div class="col-lg-8 col-md-10 mx-auto">
-              
-              
-              <button class='btn' onclick={{ufunc}}>Add Comment</button>
-              <div id={{uid}} style='display:none'>
-              <form method='POST' novalidate>
-                {% set form=answer_comment_form%}
-                <div class='form-group'>
-                  {{ form.body2.label }} {{ form.body2(class="form-control") }}
-                </div>
-                <div class='form-group' hidden>
-                    {{ form.post_id(value=answer.id)}}
-                </div>
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-sm") }}
-                </div>
-                {{form.csrf_token}}
-                {{ ckeditor.load() }}
-            </form>
-          </div>
-            </div>
-
-            <div class="col-lg-8 col-md-10 mx-auto comment">
+            <div class="col-lg-10 col-md-12 mx-auto comment">
               {% for comment in answer_comments[answer.id] %}
                 <ul class="commentList">
                   <li>
@@ -139,6 +114,23 @@
                   </li>
                 </ul>
               {% endfor %}
+              <button class='btn btn-outline-dark' onclick={{ufunc}}>Add Comment</button>
+          <div id={{uid}} style='display:none'>
+          <form method='POST' novalidate>
+            {% set form=answer_comment_form%}
+            <div class='form-group'>
+              {{ form.body2.label }} {{ form.body2(class="form-control") }}
+            </div>
+            <div class='form-group' hidden>
+                {{ form.post_id(value=answer.id)}}
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-secondary") }}
+            </div>
+            {{form.csrf_token}}
+            {{ ckeditor.load() }}
+        </form>
+      </div>
         </div>
       </div>
     </div>
