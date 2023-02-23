@@ -293,6 +293,8 @@ def add_new_post():
 @app.route("/edit-post/<int:post_id>")
 def edit_post(post_id):
     post = Posts.query.get(post_id)
+    all_tags = db.session.query(Tags.tag_name,Tags.id).all()
+    all_tags = [tag.tag_name+':'+str(tag.id) for tag in all_tags]
     edit_form = CreatePostForm(
         title=post.title,
         tags=post.tags.replace('<','').replace('>',',')[:-1],
@@ -308,7 +310,7 @@ def edit_post(post_id):
         post.last_activity_date=datetime.now()
         db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-post.html", form=edit_form)
+    return render_template("make-post.html", form=edit_form, all_tags=all_tags)
 
 
 @authenticated
@@ -327,16 +329,6 @@ def autocomplete():
     results_name = [mv.display_name+':'+str(mv.id) for mv in query_names]
     results = results_name[:200]
     return jsonify(matching_results=results) 
-
-
-@app.route('/tagsearch')
-def tagcomplete():
-    curr_search = request.args.get('q')
-    print(curr_search)
-    query_tags = db.session.query(Tags.tag_name,Tags.id).filter(Tags.tag_name.like('%' + str(curr_search) + '%')).distinct().all()
-    results_tag = [mv.tag_name+':'+str(mv.id) for mv in query_tags]
-    results = results_tag
-    return jsonify(matching_results=results)
 
 
 if __name__ == "__main__":
