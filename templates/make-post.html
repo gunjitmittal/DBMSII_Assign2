@@ -46,6 +46,7 @@
   <script>
     var inputElm = document.querySelector('input[name=newtag]'),
     whitelist = {{all_tags|tojson}};
+    inputElm.value = "{{post_tags}}"
     var tagify = new Tagify(inputElm, {
         enforceWhitelist: true,
         whitelist: inputElm.value.trim().split(/\s*,\s*/)

@@ -295,9 +295,9 @@ def edit_post(post_id):
     post = Posts.query.get(post_id)
     all_tags = db.session.query(Tags.tag_name,Tags.id).all()
     all_tags = [tag.tag_name+':'+str(tag.id) for tag in all_tags]
+    post_tags = post.tags.replace('<','').replace('>',',')[:-1]
     edit_form = CreatePostForm(
         title=post.title,
-        tags=post.tags.replace('<','').replace('>',',')[:-1],
         body=post.body
     )
     if edit_form.validate_on_submit():
@@ -310,7 +310,7 @@ def edit_post(post_id):
         post.last_activity_date=datetime.now()
         db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-post.html", form=edit_form, all_tags=all_tags)
+    return render_template("make-post.html", form=edit_form, all_tags=all_tags, post_tags=post_tags)
 
 
 @authenticated
