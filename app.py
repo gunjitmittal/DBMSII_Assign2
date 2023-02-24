@@ -307,7 +307,7 @@ def add_new_post():
             comment_count=0,
             owner_display_name=current_user.display_name,
             last_editor_display_name=current_user.display_name,
-            tags = '<'+form.tags.data.replace(',','><')+'>',
+            tags = '<'+form.newtag.data.replace(',','><')+'>',
             content_license='CC',
             favorite_count=0,
             creation_date=datetime.now(),
