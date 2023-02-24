@@ -347,7 +347,7 @@ def edit_post(post_id):
 @authenticated
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
-    post_to_delete = Posts.query.get(post_id)
+    post_to_delete = db.session.query(Posts).filter_by(id=post_id).first()
     db.session.delete(post_to_delete)
     db.session.commit()
     return redirect(url_for('get_all_posts'))

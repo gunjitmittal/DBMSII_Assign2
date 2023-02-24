@@ -28,14 +28,14 @@
     {% if user.user_display_name is not none %}
       <h2 ><br>
         &nbsp&nbsp&nbsp&nbsp Username: {{user.display_name}}<br>
-        &nbsp&nbsp&nbsp&nbsp Account ID: {{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp ID: {{user.id}}<br>
         &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
         &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
         &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
         <a href="{{url_for('editprofile', id=user.id)}}"><span class style="text-align: right; color: blue;">Edit</span></a>
     {% else %}<br>
       <h2 style = "text-align: left;" >&nbsp&nbsp&nbsp&nbsp Guest_User_{{user.account_id}}<br>
-        &nbsp&nbsp&nbsp&nbsp Account ID: {{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp ID: {{user.id}}<br>
         &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
         &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
         &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>

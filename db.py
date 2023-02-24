@@ -69,7 +69,7 @@ class Posts(db.Model):
     #
     user=relationship("Users",back_populates='post')
     posth1=relationship("PostHistory",back_populates='post1')
-    comm=relationship("Comments",back_populates='post')
+    comm=relationship("Comments",back_populates='post',cascade='all,delete')
 
 class PostsLinks(db.Model):
     __tablename__='post_links'
