@@ -24,14 +24,12 @@
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         {{ ckeditor.load() }}
-        <!--{{ ckeditor.config(name='body') }}-->
-        <!--{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}-->
-        <form >
+        <form method='post'>
           <div class='form-group'>
             {{ form.title.label }} {{ form.title(class="form-control") }}
           </div>
           <div class='form-group'>
-            {{ form.newtag.label }} {{ form.newtag(class="form-control", value="") }}
+            {{ form.newtag.label }} {{ form.newtag(class="form-control") }}
           </div>
           <div class='form-group'> 
             {{ form.body(class="form-control") }}
@@ -39,6 +37,7 @@
           <div class="form-group btn-primary" style='display:inline-block'>
               {{ form.submit(class="btn ") }}
           </div>
+          {{form.csrf_token}}
         </form>
       </div>
     </div>

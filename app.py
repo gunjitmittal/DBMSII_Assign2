@@ -290,7 +290,7 @@ def add_new_post():
 
 
 @authenticated
-@app.route("/edit-post/<int:post_id>")
+@app.route("/edit-post/<int:post_id>", methods=['GET', 'POST'])
 def edit_post(post_id):
     post = Posts.query.get(post_id)
     all_tags = db.session.query(Tags.tag_name,Tags.id).all()
@@ -305,7 +305,7 @@ def edit_post(post_id):
         post.body=edit_form.body.data
         post.last_editor_user_id=current_user.id
         post.last_editor_display_name=current_user.display_name
-        post.tags = '<'+edit_form.tags.data.replace(',','><')+'>'
+        post.tags = '<'+edit_form.newtag.data.replace(',','><')+'>'
         post.last_edit_date=datetime.now()
         post.last_activity_date=datetime.now()
         db.session.commit()
