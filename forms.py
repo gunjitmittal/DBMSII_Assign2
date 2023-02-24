@@ -40,3 +40,8 @@ class AnswerCommentForm(FlaskForm):
     body2 = CKEditorField("Comment" ,validators=[DataRequired()])
     post_id = HiddenField(validators=[DataRequired()])
     submit = SubmitField("SUBMIT COMMENT")
+
+class EditUserForm(FlaskForm):
+    display_name = TextField("New Username",render_kw={"placeholder":"Enter new username"})
+    profile_picture = TextField("New URL",render_kw={"placeholder":"Enter valid url"})
+    submit = SubmitField("Submit")

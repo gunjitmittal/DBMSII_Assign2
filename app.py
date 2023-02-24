@@ -3,10 +3,11 @@ import select
 import dotenv
 import json
 from datetime import date, datetime
+from urllib.request import urlopen
 import smtplib
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship, Query
-from sqlalchemy import func
+from sqlalchemy import func, update
 
 from flask import Flask, render_template, redirect, url_for, flash, abort, request, Response, jsonify
 from flask_bootstrap import Bootstrap
@@ -41,6 +42,14 @@ def authenticated(f):
             return f(*args, **kwargs)
         return abort(403)
     return innerfunction
+
+def is_url_image(image_url):
+    image_formats = ("image/png", "image/jpeg", "image/jpg")
+    site = urlopen(image_url)
+    meta = site.info()
+    if meta["content-type"] in image_formats:
+        return True
+    return False
 
 gravatar = Gravatar(app,
                     size=100,
@@ -253,6 +262,28 @@ def profile():
     posts = posts.order_by(Posts.creation_date.desc())
     posts=posts.paginate(page)
     return render_template("profile.html", all_posts=posts, user=user)
+
+
+@authenticated
+@app.route('/editprofile', methods=['POST', 'GET'])
+def editprofile():
+    id = request.args.get('id',type=int)
+    user = Users.query.get(id)
+    form = EditUserForm(display_name=user.display_name, profile_picture=user.profile_image_url )
+
+    if request.method == "GET":
+        return render_template("editprofile.html", form=form, user=user,check=0)
+    elif request.method == "POST":
+        if form.validate_on_submit():
+            print(form.data)
+            user.display_name = form.display_name.data
+            if form.data['profile_picture'] !='':
+                if is_url_image(form.data['profile_picture'])== True:
+                    user.profile_image_url=form.data['profile_picture']
+                else:
+                    return render_template("editprofile.html", form=form, user=user,check=1)
+            db.session.commit()
+            return redirect(url_for('profile', id=id))
 
 
 @authenticated

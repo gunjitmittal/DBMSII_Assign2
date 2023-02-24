@@ -1,0 +1,57 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% include "header.html" %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://images.unsplash.com/photo-1470092306007-055b6797ca72?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1>Gunjit's Blog</h1>
+            <span class="subheading">A collection of random musings.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Current Profile</h1><br>
+    <div class="row">
+    
+    {% if user.profile_image_url is not none%}
+    <img src={{user.profile_image_url}} width = 275 height =275 style="border-radius: 50%">
+    {%else%}
+   <img src="{{ user.id |string| gravatar(size=200, rating='g') }}" width = 275 height =275 style="border-radius: 50%" >
+   {%endif%}</a>
+    {% if user.user_display_name is not none %}
+      <h2 ><br>
+        &nbsp&nbsp&nbsp&nbsp Username: {{user.display_name}}<br>
+        &nbsp&nbsp&nbsp&nbsp Account ID: {{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
+        &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
+        &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
+    {% else %}<br>
+      <h2 style = "text-align: left;" >&nbsp&nbsp&nbsp&nbsp Guest_User_{{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Account ID: {{user.account_id}}<br>
+        &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
+        &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
+        &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
+    {% endif %} 
+    </div>
+  </div>
+  <br><br>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        {% if check==1 %}
+        <txt style="color: red;">**Please enter valid url</txt>
+        {% endif %}
+        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+    </div>
+  </div>
+  <hr>
+
+{% include "footer.html" %}
