@@ -177,10 +177,8 @@ def show_post(post_id):
                     last_activity_date = datetime.now()
                 )
                 db.session.add(new_answer)
-                db.session.commit()
                 requested_post.answer_count += 1
                 db.session.commit()
-
             else:
                 flash("You need to login or register first.")
                 return redirect(url_for('login'))
@@ -202,7 +200,6 @@ def show_post(post_id):
                 db.session.commit()
                 requested_post.comment_count += 1
                 db.session.commit()
-
             else:
                 flash("You need to login or register first.")
                 return redirect(url_for('login'))
@@ -227,9 +224,7 @@ def show_post(post_id):
             elif already_query.count() == 0:
                 flash("You need to login or register first.")
                 return redirect(url_for('login'))
-        return render_template("post.html", post=requested_post, comment_form=comment_form, comments=comments, answer_form=answer_form, answer_posts=answer_posts, answer_comments=answer_comments, answer_comment_form=answer_comment_form)
-    
-    
+        return redirect(url_for('show_post', post_id=post_id))
     return render_template("post.html", post=requested_post, comment_form=comment_form, comments=comments, answer_form=answer_form, answer_posts=answer_posts, answer_comments=answer_comments, answer_comment_form=answer_comment_form)
  
 
@@ -361,6 +356,22 @@ def autocomplete():
     results = results_name[:200]
     return jsonify(matching_results=results) 
 
+@app.route('/scoreupdate/<int:post_id>')
+def scoreupdate(post_id):
+    button=request.args.get("button")
+    post=Posts.query.get(post_id)
+    print(button)
+    if post.parent_id:
+        parent = post.parent_id
+    else:
+        parent = post.id
+    if button=='1':
+            print("in")
+            post.score+=1
+    else:
+            post.score-=1
+    db.session.commit()
+    return redirect(url_for("show_post",post_id=parent))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
