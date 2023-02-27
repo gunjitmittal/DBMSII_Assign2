@@ -26,21 +26,18 @@
    <img src="{{ user.id |string| gravatar(size=200, rating='g') }}" width = 275 height =275 style="border-radius: 50%" >
    {%endif%}</a>
     {% if user.user_display_name is not none %}
-      <h2 ><br>
+      <h2 style = "text-align: left;" ><br>
         &nbsp&nbsp&nbsp&nbsp Username: {{user.display_name}}<br>
+    {% else %}
+      <h2 style = "text-align: left;" ><br>&nbsp&nbsp&nbsp&nbsp Username: Guest_User_{{user.account_id}}<br>
+    {% endif %}
         &nbsp&nbsp&nbsp&nbsp ID: {{user.id}}<br>
         &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
         &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
         &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
+        {% if user.id==current_user.id %}
         <a href="{{url_for('editprofile', id=user.id)}}"><span class style="text-align: right; color: blue;">Edit</span></a>
-    {% else %}<br>
-      <h2 style = "text-align: left;" >&nbsp&nbsp&nbsp&nbsp Guest_User_{{user.account_id}}<br>
-        &nbsp&nbsp&nbsp&nbsp ID: {{user.id}}<br>
-        &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
-        &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
-        &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
-        <a href="{{url_for('editprofile', id=user.id)}}"><span class style="text-align: right; color: blue;">Edit</span></a>
-    {% endif %} 
+      {% endif %}
     </div>
   </div>
   <div class="container">
