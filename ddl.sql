@@ -1,6 +1,3 @@
--- Example of schema 
--- The schema does not include any indexes ( except PK's )
-
 -- Users
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
@@ -46,6 +43,7 @@ CREATE TABLE posts (
       FOREIGN KEY(owner_user_id) 
 	  REFERENCES users(id)
 );
+CREATE INDEX ix_posts_parent_id ON posts (parent_id);
 
 -- PostLinks
 CREATE TABLE post_links (
@@ -93,6 +91,7 @@ CREATE TABLE comments (
       FOREIGN KEY(user_id) 
 	  REFERENCES users(id)
 );
+CREATE INDEX ix_comments_post_id ON comments (post_id);
 
 -- Votes
 CREATE TABLE votes (
@@ -129,11 +128,11 @@ CREATE TABLE tags (
 	count INTEGER DEFAULT 0
 );
 
-COPY users FROM 'Users.csv' DELIMITER ',' CSV HEADER;
-COPY posts FROM 'Posts.csv' DELIMITER ',' CSV HEADER;
-COPY tags FROM 'Tags.csv' DELIMITER ',' CSV HEADER;
-COPY comments FROM 'Comments.csv' DELIMITER ',' CSV HEADER;
-COPY badges FROM 'Badges.csv' DELIMITER ',' CSV HEADER;
-COPY votes FROM 'Votes.csv' DELIMITER ',' CSV HEADER;
-COPY post_links FROM 'PostLinks.csv' DELIMITER ',' CSV HEADER;
-COPY post_history FROM 'PostHistory.csv' DELIMITER ',' CSV HEADER;
+\COPY users FROM 'Users.csv' DELIMITER ',' CSV HEADER;
+\COPY posts FROM 'Posts.csv' DELIMITER ',' CSV HEADER;
+\COPY tags FROM 'Tags.csv' DELIMITER ',' CSV HEADER;
+\COPY comments FROM 'Comments.csv' DELIMITER ',' CSV HEADER;
+\COPY badges FROM 'Badges.csv' DELIMITER ',' CSV HEADER;
+\COPY votes FROM 'Votes.csv' DELIMITER ',' CSV HEADER;
+\COPY post_links FROM 'PostLinks.csv' DELIMITER ',' CSV HEADER;
+\COPY post_history FROM 'PostHistory.csv' DELIMITER ',' CSV HEADER;

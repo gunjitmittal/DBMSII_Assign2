@@ -29,13 +29,13 @@ class Users(db.Model,UserMixin):
 
 class Posts(db.Model):
     __tablename__='posts'
-    id=db.Column(db.Integer,primary_key=True)
+    id=db.Column(db.Integer,primary_key=True,index=True)
     owner_user_id=db.Column(db.Integer,db.ForeignKey("users.id"))
     last_editor_user_id=db.Column(db.Integer)
     post_type_id=db.Column(db.Integer,nullable=False)
     accepted_answer_id=db.Column(db.Integer)
     score=db.Column(db.Integer,nullable=False)
-    parent_id=db.Column(db.Integer)
+    parent_id=db.Column(db.Integer,index=True)
     view_count=db.Column(db.Integer)
     answer_count=db.Column(db.Integer,default=0)
     comment_count=db.Column(db.Integer,default=0)
@@ -82,8 +82,8 @@ class PostHistory(db.Model):
 
 class Comments(db.Model):
     __tablename__='comments'
-    id=db.Column(db.Integer,primary_key=True)
-    post_id=db.Column(db.Integer,db.ForeignKey("posts.id"),nullable=False)
+    id=db.Column(db.Integer,primary_key=True,index=True)
+    post_id=db.Column(db.Integer,db.ForeignKey("posts.id"),nullable=False,index=True)
     user_id=db.Column(db.Integer,db.ForeignKey("users.id"))
     score=db.Column(db.Integer,nullable=False)
     content_license=db.Column(db.String(64),nullable=False)
