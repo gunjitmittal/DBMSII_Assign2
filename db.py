@@ -1,23 +1,8 @@
-import os
-from dotenv import load_dotenv
 from sqlalchemy.orm import relationship
-
-from flask import Flask
-from flask_ckeditor import CKEditor
-from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
-load_dotenv(".env")
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-ckeditor = CKEditor(app)
-Bootstrap(app)
-
-# Connect to the database
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@localhost:5432/cqadb"
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 # Database schema
 class Users(db.Model,UserMixin):
@@ -138,5 +123,3 @@ class Tags(db.Model):
     wiki_post_id=db.Column(db.Integer)
     tag_name=db.Column(db.String(255))
     count=db.Column(db.Integer,default=0)
-
-db.create_all()
