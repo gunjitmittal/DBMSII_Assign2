@@ -159,10 +159,14 @@
   </div>
   <script>
     let count = 10;
+    if ({{post.answer_count}} <= 5)
+      $("#showmore").hide();
     $("#showmore").click(function() {
       for (let i = count + 1; i <= count + 5; i++) 
         $("#answer" + i).show();
       count += 5;
+      if (count >= {{post.answer_count}})
+        $("#showmore").hide();
     });
   </script>
   <hr>
