@@ -1,21 +1,16 @@
 import os
-import select
 import dotenv
 import json
-from datetime import date, datetime
+from datetime import datetime
 from urllib.request import urlopen
 import smtplib
-from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import relationship, Query
-from sqlalchemy import func, update
+from sqlalchemy import func
 
-from flask import Flask, render_template, redirect, url_for, flash, abort, request, Response, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, abort, request, jsonify
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user, LoginManager, login_required, current_user, logout_user
+from flask_login import login_user, LoginManager, current_user, logout_user
 from flask_gravatar import Gravatar
-
 from forms import *
 from db import *
 
@@ -24,14 +19,13 @@ my_email = os.getenv("MY_EMAIL")
 password = os.getenv("PASSWORD")
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # Connect to the database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@localhost:5432/cqadb"
-db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
+db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
