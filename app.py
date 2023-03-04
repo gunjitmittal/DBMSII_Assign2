@@ -73,7 +73,6 @@ def get_all_posts():
         posts = Posts.query.filter_by(post_type_id=1).filter_by(owner_display_name=name)
     if name == "" and tags1 != "":
         tags1 = [tag['value'] for tag in json.loads(tags1)]
-        print(tags1)
         tags1 = [tag.split(':')[0] for tag in tags1]
         q=[]
         for i in range(len(tags1)):
@@ -147,9 +146,6 @@ def show_post(post_id):
     answer_comments = {answer.id:Comments.query.filter_by(post_id=answer.id).all()[:5] for answer in answer_posts}
 
     if request.method == "POST":
-        print(answer_comment_form.data)
-        print(comment_form.data)
-        print(answer_form.data)
         if answer_form.validate_on_submit():
             if current_user.is_authenticated:
                 max_index = db.session.query(func.max(Posts.id)).first()
@@ -263,7 +259,6 @@ def editprofile():
         return render_template("editprofile.html", form=form, user=user,check=0)
     elif request.method == "POST":
         if form.validate_on_submit():
-            print(form.data)
             user.display_name = form.display_name.data
             if form.data['profile_picture'] !='':
                 if is_url_image(form.data['profile_picture'])== True:
@@ -282,6 +277,8 @@ def add_new_post():
     all_tags = [tag.tag_name+':'+str(tag.id) for tag in all_tags]
     if form.validate_on_submit():
         max_index = db.session.query(func.max(Posts.id)).first()
+        tags = json.loads(form.newtag.data)
+        tags = ','.join([tag['value'] for tag in tags])
         new_post = Posts(
             id = max_index[0] + 1,
             title=form.title.data,
@@ -295,7 +292,7 @@ def add_new_post():
             comment_count=0,
             owner_display_name=current_user.display_name,
             last_editor_display_name=current_user.display_name,
-            tags = '<'+form.newtag.data.replace(',','><')+'>',
+            tags = '<'+tags.replace(',','><')+'>',
             content_license='CC',
             favorite_count=0,
             creation_date=datetime.now(),
@@ -355,13 +352,11 @@ def autocomplete():
 def scoreupdate(post_id):
     button=request.args.get("button")
     post=Posts.query.get(post_id)
-    print(button)
     if post.parent_id:
         parent = post.parent_id
     else:
         parent = post.id
     if button=='1':
-            print("in")
             post.score+=1
     else:
             post.score-=1

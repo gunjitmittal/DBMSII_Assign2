@@ -6,7 +6,15 @@ CREATE TABLE users (
 	views INTEGER DEFAULT 0,
 	down_votes INTEGER DEFAULT 0,
 	up_votes INTEGER DEFAULT 0,
-	display_name VARCHAR(255) NOT NULL,
+	display_name VARCHAR(255) NOTDROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS badges;
+DROP TABLE IF EXISTS votes;
+DROP TABLE IF EXISTS post_links;
+DROP TABLE IF EXISTS post_history;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;
+ NULL,
 	location VARCHAR(512),
 	profile_image_url VARCHAR(255),
 	website_url VARCHAR(255),
@@ -128,11 +136,11 @@ CREATE TABLE tags (
 	count INTEGER DEFAULT 0
 );
 
-\COPY users FROM 'Users.csv' DELIMITER ',' CSV HEADER;
-\COPY posts FROM 'Posts.csv' DELIMITER ',' CSV HEADER;
-\COPY tags FROM 'Tags.csv' DELIMITER ',' CSV HEADER;
-\COPY comments FROM 'Comments.csv' DELIMITER ',' CSV HEADER;
-\COPY badges FROM 'Badges.csv' DELIMITER ',' CSV HEADER;
-\COPY votes FROM 'Votes.csv' DELIMITER ',' CSV HEADER;
-\COPY post_links FROM 'PostLinks.csv' DELIMITER ',' CSV HEADER;
-\COPY post_history FROM 'PostHistory.csv' DELIMITER ',' CSV HEADER;
+COPY users FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/Users.csv' DELIMITER ',' CSV HEADER;
+COPY posts FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/Posts.csv' DELIMITER ',' CSV HEADER;
+COPY tags FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/Tags.csv' DELIMITER ',' CSV HEADER;
+COPY comments FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/Comments.csv' DELIMITER ',' CSV HEADER;
+COPY badges FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/Badges.csv' DELIMITER ',' CSV HEADER;
+COPY votes FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/Votes.csv' DELIMITER ',' CSV HEADER;
+COPY post_links FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/PostLinks.csv' DELIMITER ',' CSV HEADER;
+COPY post_history FROM '/Users/Shared/d/DBMS-2/Assingment-2/Data/PostHistory.csv' DELIMITER ',' CSV HEADER;
