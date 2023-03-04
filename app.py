@@ -205,9 +205,7 @@ def show_post(post_id):
                 return redirect(url_for('login'))
 
         elif answer_comment_form.validate_on_submit():
-            print('just added')
-            already_query = Comments.query.filter_by(user_id=current_user.id).filter_by(text=answer_comment_form.data['body2']).filter(str(Comments.creation_date)[:19] == str(datetime.now())[:19])
-            if already_query.count() == 0 and current_user.is_authenticated:
+            if current_user.is_authenticated:
                 max_index = db.session.query(func.max(Comments.id)).first()
                 new_answer_comment = Comments(
                     id = max_index[0] + 1,
@@ -221,7 +219,7 @@ def show_post(post_id):
                 )
                 db.session.add(new_answer_comment)
                 db.session.commit()
-            elif already_query.count() == 0:
+            else:
                 flash("You need to login or register first.")
                 return redirect(url_for('login'))
         return redirect(url_for('show_post', post_id=post_id))

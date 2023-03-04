@@ -85,10 +85,12 @@
       }
     }
   </script>
+
+  <!-- Answers area -->
   {% for answer in answer_posts %}
   {% set uid = 'commentform'+answer.id|string %}
   {% set ufunc = 'toggle' +answer.id|string + "()" %}
-  <article>
+  <article id={{"answer" + loop.index|string}} style={{"display:none" if loop.index > 5}}>
     <div class="">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
@@ -150,5 +152,18 @@
     }
   </script>
   {% endfor %}
+
+  <!-- Show more button logic -->
+  <div style="text-align: center; margin-top: 50px;">
+    <button class="btn btn-primary" id="showmore">Show more answers</button>
+  </div>
+  <script>
+    let count = 10;
+    $("#showmore").click(function() {
+      for (let i = count + 1; i <= count + 5; i++) 
+        $("#answer" + i).show();
+      count += 5;
+    });
+  </script>
   <hr>
 {% include "footer.html" %}
