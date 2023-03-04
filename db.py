@@ -53,7 +53,7 @@ class Posts(db.Model):
     last_activity_date=db.Column(db.TIMESTAMP)
     #
     user=relationship("Users",back_populates='post')
-    posth1=relationship("PostHistory",back_populates='post1')
+    posth1=relationship("PostHistory",back_populates='post1',cascade='all,delete')
     comm=relationship("Comments",back_populates='post',cascade='all,delete')
 
 class PostsLinks(db.Model):

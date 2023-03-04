@@ -122,7 +122,7 @@ def login():
             flash("Not registered")
         else:
             if form.data['password']==form.data['id']:
-                login_user(user)
+                login_user(user, remember=True)
                 return redirect(url_for('get_all_posts'))
             else:
                 flash('Wrong password')
