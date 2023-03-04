@@ -6,15 +6,7 @@ CREATE TABLE users (
 	views INTEGER DEFAULT 0,
 	down_votes INTEGER DEFAULT 0,
 	up_votes INTEGER DEFAULT 0,
-	display_name VARCHAR(255) NOTDROP TABLE IF EXISTS tags;
-DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS badges;
-DROP TABLE IF EXISTS votes;
-DROP TABLE IF EXISTS post_links;
-DROP TABLE IF EXISTS post_history;
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS users;
- NULL,
+	display_name VARCHAR(255) NOT NULL,
 	location VARCHAR(512),
 	profile_image_url VARCHAR(255),
 	website_url VARCHAR(255),
