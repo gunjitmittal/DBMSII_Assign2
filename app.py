@@ -13,6 +13,7 @@ from flask_login import login_user, LoginManager, current_user, logout_user
 from flask_gravatar import Gravatar
 from forms import *
 from db import *
+import json
 
 files = dotenv.load_dotenv(".env")
 my_email = os.getenv("MY_EMAIL")
@@ -319,11 +320,13 @@ def edit_post(post_id):
         body=post.body
     )
     if edit_form.validate_on_submit():
+        tags = json.loads(edit_form.newtag.data)
+        tags = ','.join([tag['value'] for tag in tags])
         post.title=edit_form.title.data
         post.body=edit_form.body.data
         post.last_editor_user_id=current_user.id
         post.last_editor_display_name=current_user.display_name
-        post.tags = '<'+edit_form.newtag.data.replace(',','><')+'>'
+        post.tags = '<'+tags.replace(',','><')+'>'
         post.last_edit_date=datetime.now()
         post.last_activity_date=datetime.now()
         db.session.commit()
