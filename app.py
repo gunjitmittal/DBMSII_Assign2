@@ -350,18 +350,29 @@ def autocomplete():
 
 @app.route('/scoreupdate/<int:post_id>')
 def scoreupdate(post_id):
-    button=request.args.get("button")
     post=Posts.query.get(post_id)
     if post.parent_id:
         parent = post.parent_id
     else:
         parent = post.id
-    if button=='1':
-            post.score+=1
+    a = Votes.query.filter_by(user_id=current_user.id,post_id=post_id).all()
+    if len(a)>0:
+        return redirect(url_for("show_post",post_id=parent))
     else:
-            post.score-=1
-    db.session.commit()
-    return redirect(url_for("show_post",post_id=parent))
+        button=request.args.get("button")
+        if button=='1':
+                post.score+=1
+        else:
+                post.score-=1
+        vote = Votes(
+            user_id=current_user.id,
+            post_id=post.id,
+            vote_type_id=2 if button=='1' else 3,
+            creation_date=datetime.now()
+        )
+        db.session.add(vote)
+        db.session.commit()
+        return redirect(url_for("show_post",post_id=parent))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

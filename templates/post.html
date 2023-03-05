@@ -36,6 +36,10 @@
       <div class="row">
         <div class="col-lg-10 col-md-12 mx-auto">
             {{ post.body|safe }}
+            <div style="width:2%;margin-right: 1%;float: left;margin-top: -0.2%;display: inline-table;">
+              <a href="{{url_for('scoreupdate',post_id=post.id,button=1)}}"><i class="fa-solid fa-caret-up" style="font-size:40px;color:rgb(0, 0, 0)"></i></a>
+            </div><div style="width: 2%;float: left;display: inline-table;margin-right: 1%;">{{post.score}}</div>
+               <div style="width: 2%;float: left;display: inline-table;margin-right: 1%;margin-top:-0.9%;"><a href="{{url_for('scoreupdate',post_id=post.id,button=0)}}"><i class="fa-solid fa-caret-down" style="font-size:40px;color:rgb(0, 0, 0);margin-top:5%;"></i></a></div>
           <hr>
             {% if current_user.id==post.owner_user_id %}
               <div class="clearfix">
