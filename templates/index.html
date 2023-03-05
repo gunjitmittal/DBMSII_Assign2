@@ -57,7 +57,7 @@
             </h3> -->
           </a>
           <p class="post-meta">Posted by
-            <a href="{{url_for('profile', id=post.owner_user_id)}}">{{post.owner_display_name}}</a>
+            <a href="{{url_for('profile', id=post.owner_user_id)}}">{% if post.owner_display_name %} {{post.owner_display_name}}{%else%}{{post.user.display_name}}{%endif%}</a>
             on {{post.creation_date.date()}} 
             <br>
             tags: {{post.tags.replace('<','').replace('>',', ')[:-2]}}
