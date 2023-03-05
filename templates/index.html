@@ -50,7 +50,7 @@
             </h3> -->
           </a>
           <p class="post-meta">Posted by
-            <a href="{{url_for('profile', id=post.owner_user_id)}}">{{post.owner_display_name}}</a>
+            <a href="{{url_for('profile', id=post.owner_user_id)}}">{% if post.owner_display_name %} {{post.owner_display_name}}{%else%}{{post.user.display_name}}{%endif%}</a>
             on {{post.creation_date.date()}} tag:{{post.tags.replace('<','').replace('>',',')[:-1]}}
             {% if current_user.id==post.owner_user_id %}
               <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>

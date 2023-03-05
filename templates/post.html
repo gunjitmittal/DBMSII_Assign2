@@ -108,6 +108,9 @@
               <a href="{{url_for('scoreupdate',post_id=answer.id,button=1)}}"><i class="fa-solid fa-caret-up" style="font-size:40px;color:rgb(0, 0, 0)"></i></a>
             </div><div style="width: 2%;float: left;display: inline-table;margin-right: 1%;">{{answer.score}}</div>
                <div style="width: 2%;float: left;display: inline-table;margin-right: 1%;margin-top:-0.9%;"><a href="{{url_for('scoreupdate',post_id=answer.id,button=0)}}"><i class="fa-solid fa-caret-down" style="font-size:40px;color:rgb(0, 0, 0)"></i></a></div>
+               {% if current_user.id==answer.owner_user_id %}
+              <a href="{{url_for('delete_post', post_id=answer.id) }}">✘</a>
+            {% endif %}
             <div class="col-lg-10 col-md-12 mx-auto comment" style="padding-top: 40px;">
               {% for comment in answer_comments[answer.id] %}
                 <ul class="commentList">
