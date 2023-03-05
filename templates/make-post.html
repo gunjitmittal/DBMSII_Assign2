@@ -48,7 +48,11 @@
     inputElm.value = "{{post_tags}}"
     var tagify = new Tagify(inputElm, {
         enforceWhitelist: true,
-        whitelist: inputElm.value.trim().split(/\s*,\s*/)
+        whitelist: inputElm.value.trim().split(/\s*,\s*/),
+        dropdown: {
+          enabled: 1,
+          maxItems: Infinity,
+        }
     })
     tagify.on('add', onAddTag)
           .on('remove', onRemoveTag)
