@@ -355,8 +355,19 @@ def scoreupdate(post_id):
         parent = post.parent_id
     else:
         parent = post.id
+    if post.owner_user_id==current_user.id:
+        return redirect(url_for("show_post",post_id=parent))
     a = Votes.query.filter_by(user_id=current_user.id,post_id=post_id).all()
     if len(a)>0:
+        button=request.args.get("button")
+        vote = a[0]
+        if vote.vote_type_id==2 and button=='0':
+            post.score-=2
+            vote.vote_type_id=3
+        elif vote.vote_type_id==3 and button=='1':
+            post.score+=2
+            vote.vote_type_id=2
+        db.session.commit()
         return redirect(url_for("show_post",post_id=parent))
     else:
         button=request.args.get("button")
@@ -364,7 +375,9 @@ def scoreupdate(post_id):
                 post.score+=1
         else:
                 post.score-=1
+        max_index = db.session.query(func.max(Votes.id)).first()
         vote = Votes(
+            id = max_index[0] + 1,
             user_id=current_user.id,
             post_id=post.id,
             vote_type_id=2 if button=='1' else 3,
