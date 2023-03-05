@@ -231,7 +231,7 @@ def contact():
         connection.starttls()
         connection.login(user=my_email, password=password)
         connection.sendmail(from_addr=my_email, to_addrs="ai21btech11004@iith.ac.in",
-                            msg=f"Subject: Blog-contact-form\n\n Name: {request.form['name']} \n Email:"
+                            msg=f"Subject: IHQA Contact Form\n\n Name: {request.form['name']} \n Email:"
                                 f" {request.form['email']} \n Phone: {request.form['phone']} \n Message: {request.form['message']} ")
         connection.close()
         return render_template("contact.html", submitted=True)
