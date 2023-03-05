@@ -11,9 +11,9 @@ from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from flask_login import login_user, LoginManager, current_user, logout_user
 from flask_gravatar import Gravatar
+
 from forms import *
 from db import *
-import json
 
 files = dotenv.load_dotenv(".env")
 my_email = os.getenv("MY_EMAIL")
@@ -351,41 +351,48 @@ def autocomplete():
 @app.route('/scoreupdate/<int:post_id>')
 def scoreupdate(post_id):
     post=Posts.query.get(post_id)
-    if post.parent_id:
-        parent = post.parent_id
-    else:
-        parent = post.id
-    if post.owner_user_id==current_user.id:
-        return redirect(url_for("show_post",post_id=parent))
-    a = Votes.query.filter_by(user_id=current_user.id,post_id=post_id).all()
-    if len(a)>0:
-        button=request.args.get("button")
-        vote = a[0]
-        if vote.vote_type_id==2 and button=='0':
-            post.score-=2
-            vote.vote_type_id=3
-        elif vote.vote_type_id==3 and button=='1':
-            post.score+=2
-            vote.vote_type_id=2
-        db.session.commit()
-        return redirect(url_for("show_post",post_id=parent))
-    else:
-        button=request.args.get("button")
-        if button=='1':
-                post.score+=1
+    
+    if current_user.is_authenticated:
+
+        if post.parent_id:
+            parent = post.parent_id
         else:
-                post.score-=1
-        max_index = db.session.query(func.max(Votes.id)).first()
-        vote = Votes(
-            id = max_index[0] + 1,
-            user_id=current_user.id,
-            post_id=post.id,
-            vote_type_id=2 if button=='1' else 3,
-            creation_date=datetime.now()
-        )
-        db.session.add(vote)
-        db.session.commit()
-        return redirect(url_for("show_post",post_id=parent))
+            parent = post.id
+        if post.owner_user_id==current_user.id:
+            return redirect(url_for("show_post",post_id=parent))
+
+        a = Votes.query.filter_by(user_id=current_user.id,post_id=post_id).all()
+        if len(a)>0:
+            button=request.args.get("button")
+            vote = a[0]
+            if vote.vote_type_id==2 and button=='0':
+                post.score-=2
+                vote.vote_type_id=3
+            elif vote.vote_type_id==3 and button=='1':
+                post.score+=2
+                vote.vote_type_id=2
+            db.session.commit()
+            return redirect(url_for("show_post",post_id=parent))
+        else:
+            button=request.args.get("button")
+            if button=='1':
+                    post.score+=1
+            else:
+                    post.score-=1
+            max_index = db.session.query(func.max(Votes.id)).first()
+            vote = Votes(
+                id = max_index[0] + 1,
+                user_id=current_user.id,
+                post_id=post.id,
+                vote_type_id=2 if button=='1' else 3,
+                creation_date=datetime.now()
+            )
+            db.session.add(vote)
+            db.session.commit()
+            return redirect(url_for("show_post",post_id=parent))
+    else:
+        flash("You need to login or register first.")
+        return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -8,8 +8,9 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>Gunjit's Blog</h1>
-            <span class="subheading">A collection of random musings.</span>
+            <h1>IHQA</h1>
+            <h3>IIT Hyderabad Question Answer</h3>
+            <span class="subheading">A question and answer website for the IIT Hyderabad community</span>
           </div>
         </div>
         <div class="col-lg-10 col-md-12 mx-auto search-form">
@@ -38,6 +39,12 @@
   <div class="">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
+        <!-- New Post -->
+        {% if current_user.is_authenticated %}
+        <div class="clearfix">
+          <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
+        </div>
+        {% endif %}
        <!--{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}-->
         {% for post in all_posts.items %}
         <div class="post-preview">
@@ -51,7 +58,9 @@
           </a>
           <p class="post-meta">Posted by
             <a href="{{url_for('profile', id=post.owner_user_id)}}">{{post.owner_display_name}}</a>
-            on {{post.creation_date.date()}} tag:{{post.tags.replace('<','').replace('>',',')[:-1]}}
+            on {{post.creation_date.date()}} 
+            <br>
+            tags: {{post.tags.replace('<','').replace('>',', ')[:-2]}}
             {% if current_user.id==post.owner_user_id %}
               <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
             {% endif %}
@@ -67,12 +76,7 @@
 
         {% if all_posts.has_prev %}<a href="{{ url_for('get_all_posts', page=all_posts.prev_num, autocomp=args['autocomp'], tag_autocomp=args['tag_autocomp'], sortby=args['sortby']) }}">&lt;&lt; Previous page</a>{% endif %} | 
         {% if all_posts.has_next %}<a href="{{ url_for('get_all_posts', page=all_posts.next_num, autocomp=args['autocomp'], tag_autocomp=args['tag_autocomp'], sortby=args['sortby']) }}">Next Page &gt;&gt;</a>{% endif %}
-        <!-- New Post -->
-        {% if current_user.is_authenticated %}
-          <div class="clearfix">
-            <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
-          </div>
-        {% endif %}
+        
       <script>
         $(function() {
           $("#autocomplete").autocomplete({

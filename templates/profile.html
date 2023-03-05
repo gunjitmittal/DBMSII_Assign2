@@ -8,8 +8,8 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>Gunjit's Blog</h1>
-            <span class="subheading">A collection of random musings.</span>
+            <h1>Profile page</h1>
+            <span class="subheading">Take a look at all your questions</span>
           </div>
         </div>
       </div>
@@ -35,10 +35,18 @@
         &nbsp&nbsp&nbsp&nbsp Reputation: {{user.reputation}}<br>
         &nbsp&nbsp&nbsp&nbsp Total Views: {{user.views}}<br>
         &nbsp&nbsp&nbsp&nbsp Upvotes : {{user.up_votes}}</h2>
-        {% if user.id==current_user.id %}
-        <a href="{{url_for('editprofile', id=user.id)}}"><span class style="text-align: right; color: blue;">Edit</span></a>
+        
+    </div>
+    <div style="text-align: center;">
+      {% if user.id==current_user.id %}
+        <button class="btn btn-primary" onclick="editprofile()">Edit profile</button>
       {% endif %}
     </div>
+    <script>
+      function editprofile() {
+        window.location.href = "{{url_for('editprofile', id=user.id)}}";
+      }
+    </script>
   </div>
   <div class="container">
     <div class="row">

@@ -3,23 +3,20 @@ from wtforms import StringField, SubmitField,TextField, PasswordField, SelectFie
 from wtforms.validators import DataRequired, URL, Email
 from flask_ckeditor import CKEditorField
 
-# WTForm
 class CreatePostForm(FlaskForm):
-    title = StringField("Blog Post Title", validators=[DataRequired()])
+    title = StringField("Post title", validators=[DataRequired()])
     newtag = StringField("Tags",id= 'tag_autocomplete' ,validators=[DataRequired()],render_kw={"placeholder": "Add tags"})
     body = CKEditorField("Blog Content", validators=[DataRequired()])
     submit = SubmitField("SUBMIT POST")
 
-
 class RegistrationForm(FlaskForm):
-    name = StringField("Display Name", validators=[DataRequired()])
+    name = StringField("Username", validators=[DataRequired()])
     submit = SubmitField("REGISTER")
 
 class LoginForm(FlaskForm):
     id = StringField("ID", validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField("LOGIN")
-
 
 class CommentForm(FlaskForm):
     body = CKEditorField("Comment", validators=[DataRequired()])
@@ -42,6 +39,6 @@ class AnswerCommentForm(FlaskForm):
     submit = SubmitField("SUBMIT COMMENT")
 
 class EditUserForm(FlaskForm):
-    display_name = TextField("New Username",render_kw={"placeholder":"Enter new username"})
-    profile_picture = TextField("New URL",render_kw={"placeholder":"Enter valid url"})
+    display_name = TextField("New username",render_kw={"placeholder":"Enter new username"})
+    profile_picture = TextField("New image URL",render_kw={"placeholder":"Enter valid url"})
     submit = SubmitField("Submit")
