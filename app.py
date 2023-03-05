@@ -335,9 +335,19 @@ def edit_post(post_id):
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
     post_to_delete = db.session.query(Posts).filter_by(id=post_id).first()
+    post=Posts.query.get(post_id)
+    ret = False
+    if post.parent_id:
+        parent = post.parent_id
+        ret = True
+    else:
+        parent = post.id
     db.session.delete(post_to_delete)
     db.session.commit()
-    return redirect(url_for('get_all_posts'))
+    if ret:
+        return redirect(url_for('show_post',post_id=parent))
+    else:
+        return redirect(url_for('get_all_posts'))
 
 
 @app.route('/search')
